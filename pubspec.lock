@@ -135,15 +135,10 @@ packages:
     version: "0.11.2"
   ng2_form_components:
     description:
-      path: "..\\ng2_form_components"
-      relative: true
-    source: path
-    version: "0.0.1"
-  ng2_html_editor:
-    description:
-      path: "..\\ng2_html_editor"
-      relative: true
-    source: path
+      ref: HEAD
+      resolved-ref: "0e2eabcd18e8f0628d300213a40892a325eb180a"
+      url: "https://github.com/frankpepermans/ng2_form_components.git"
+    source: git
     version: "0.0.1"
   observe:
     description:
