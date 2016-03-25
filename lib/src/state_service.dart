@@ -19,6 +19,7 @@ class StateService {
 
   final ExceptionHandler exceptionHandler;
 
+  String stateName = 'ng2_state';
   Stream<bool> get ready$ => _ready$ctrl.stream;
   bool isReady = false;
 
@@ -114,7 +115,7 @@ class StateService {
   }
 
   Future<bool> _initStreams() async {
-    final storage.Store db = await storage.Store.open('ng2_db', 'ng2_state');
+    final storage.Store db = await storage.Store.open('ng2_db', stateName);
     final String existingState = await db.getByKey('state');
     List<Entity> existing = <StateContainer>[];
 

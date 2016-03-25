@@ -35,7 +35,7 @@ class State implements OnChanges {
   StatefulComponent _component;
   StreamSubscription _provideStateSubscription;
 
-  State(this._stateService, this._element, this._appView, this._exceptionHandler) {
+  State(@Inject(StateService) this._stateService, @Inject(ElementRef) this._element, @Inject(AppViewManager) this._appView, @Inject(ExceptionHandler) this._exceptionHandler) {
     dynamic component = _appView.getComponent(_element);
 
     if (component is! StatefulComponent) {
