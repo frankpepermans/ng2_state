@@ -21,7 +21,7 @@ class StateService {
 
   String stateName = 'ng2_state';
   Stream<bool> get ready$ => _ready$ctrl.stream;
-  bool isReady = false;
+  bool isReady = false, _initStarted = false;
 
   final EntityFactory<Entity> _factory = new EntityFactory();
   final StreamController<StateContainer> _state$ctrl = new StreamController<StateContainer>();
@@ -48,8 +48,6 @@ class StateService {
         (DateTime value) => value.millisecondsSinceEpoch
       );
 
-    _instance._initStreams();
-
     return _instance;
   }
 
@@ -66,7 +64,11 @@ class StateService {
     _snapshot$ctrl.add(container);
   }
 
-  void registerState(State state) => _states.add(state);
+  void registerState(State state) {
+    _initStreams();
+
+    _states.add(state);
+  }
 
   void unregisterState(State state) {
     if (_states.contains(state)) _states.remove(state);
@@ -114,30 +116,57 @@ class StateService {
     return completer.future;
   }
 
-  Future<bool> _initStreams() async {
+  void _initStreams() {
+    if (_initStarted) return;
+
+    _initStarted = true;
+
+    _getSnapshot$()
+      .listen((Tuple2<storage.Store, List<Entity>> tuple) {
+        rx.observable(_aggregatedState$ctrl.stream)
+          .tap((List<StateContainer> aggregated) => _snapshot = aggregated)
+          .flatMapLatest((List<StateContainer> aggregated) {
+            final StreamController<List<StateContainer>> ctrl = new StreamController<List<StateContainer>>();
+
+            new rx.Observable.merge(<Stream>[
+              window.onUnload,
+              window.onBeforeUnload
+            ])
+                .take(1)
+                .listen((_) {
+              ctrl.add(aggregated);
+            });
+
+            return ctrl.stream;
+          })
+          .listen((List<StateContainer> aggregated) async {
+            await tuple.item1.save(_serializer.outgoing(aggregated), 'state');
+          });
+
+        new rx.Observable<List<StateContainer>>.zip([
+          _state$ctrl.stream,
+          rx.observable(_aggregatedState$ctrl.stream).startWith([tuple.item2])
+        ], (StateContainer incoming, List<StateContainer> aggregated) {
+          final List<StateContainer> copy = new List<StateContainer>.from(aggregated);
+
+          copy.removeWhere((StateContainer container) => container.group == incoming.group && container.id == incoming.id);
+
+          copy.add(incoming);
+
+          return copy;
+        })
+          .listen(_aggregatedState$ctrl.add);
+
+        _ready$ctrl.add(true);
+
+        isReady = true;
+      });
+  }
+
+  Stream<Tuple2<storage.Store, List<Entity>>> _getSnapshot$() async* {
     final storage.Store db = await storage.Store.open('ng2_db', stateName);
     final String existingState = await db.getByKey('state');
     List<Entity> existing = <StateContainer>[];
-
-    rx.observable(_aggregatedState$ctrl.stream)
-      .tap((List<StateContainer> aggregated) => _snapshot = aggregated)
-      .flatMapLatest((List<StateContainer> aggregated) {
-        final StreamController<List<StateContainer>> ctrl = new StreamController<List<StateContainer>>();
-
-        new rx.Observable.merge(<Stream>[
-          window.onUnload,
-          window.onBeforeUnload
-        ])
-          .take(1)
-          .listen((_) {
-            ctrl.add(aggregated);
-          });
-
-        return ctrl.stream;
-      })
-      .listen((List<StateContainer> aggregated) async {
-        await db.save(_serializer.outgoing(aggregated), 'state');
-      });
 
     if (existingState != null) {
       try {
@@ -151,25 +180,7 @@ class StateService {
       }
     }
 
-    new rx.Observable<List<StateContainer>>.zip([
-      _state$ctrl.stream,
-      rx.observable(_aggregatedState$ctrl.stream).startWith([existing])
-    ], (StateContainer incoming, List<StateContainer> aggregated) {
-      final List<StateContainer> copy = new List<StateContainer>.from(aggregated);
-
-      copy.removeWhere((StateContainer container) => container.group == incoming.group && container.id == incoming.id);
-
-      copy.add(incoming);
-
-      return copy;
-    })
-      .listen(_aggregatedState$ctrl.add);
-
-    _ready$ctrl.add(true);
-
-    isReady = true;
-
-    return true;
+    yield new Tuple2<storage.Store, List<Entity>>(db, existing);
   }
 
 }
