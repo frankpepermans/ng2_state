@@ -108,7 +108,7 @@ class StateService {
     });
 
     ctrl.stream.take(recordingSession.aggregatedStates.length).listen((StateContainer container) {
-      final State match = _states.firstWhere((State state) => state.stateGroup == container.group && state.stateId == container.id, orElse: () => null);
+      final State match = _states.firstWhere((State state) => state.state == container.group && state.stateId == container.id, orElse: () => null);
 
       if (match != null) match.component.receiveState(container.stateParts, StatePhase.REPLAY);
     }, onDone: () => completer.complete(true), onError: (error) => completer.complete(false));
@@ -125,20 +125,10 @@ class StateService {
       .listen((Tuple2<storage.Store, List<Entity>> tuple) {
         rx.observable(_aggregatedState$ctrl.stream)
           .tap((List<StateContainer> aggregated) => _snapshot = aggregated)
-          .flatMapLatest((List<StateContainer> aggregated) {
-            final StreamController<List<StateContainer>> ctrl = new StreamController<List<StateContainer>>();
-
-            new rx.Observable.merge(<Stream>[
-              window.onUnload,
-              window.onBeforeUnload
-            ])
-                .take(1)
-                .listen((_) {
-              ctrl.add(aggregated);
-            });
-
-            return ctrl.stream;
-          })
+          .flatMapLatest((List<StateContainer> aggregated) =>
+            window.onBeforeUnload
+              .take(1)
+              .map((_) => aggregated))
           .listen((List<StateContainer> aggregated) async {
             await tuple.item1.save(_serializer.outgoing(aggregated), 'state');
           });

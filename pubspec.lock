@@ -54,19 +54,25 @@ packages:
       name: code_transformers
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.1"
+    version: "0.4.2"
   collection:
     description:
       name: collection
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.0"
+    version: "1.4.1"
+  convert:
+    description:
+      name: convert
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   crypto:
     description:
       name: crypto
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.1"
+    version: "0.9.2+1"
   csslib:
     description:
       name: csslib
@@ -90,7 +96,7 @@ packages:
       name: dorm
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.19"
+    version: "1.0.21"
   fixnum:
     description:
       name: fixnum
@@ -136,16 +142,16 @@ packages:
   ng2_form_components:
     description:
       ref: HEAD
-      resolved-ref: "0e2eabcd18e8f0628d300213a40892a325eb180a"
+      resolved-ref: "10ec6e668ca96c5272050adf51c9abc0dceb4d2a"
       url: "https://github.com/frankpepermans/ng2_form_components.git"
     source: git
-    version: "0.0.1"
+    version: "0.0.2"
   observe:
     description:
       name: observe
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.4"
+    version: "0.13.5"
   package_config:
     description:
       name: package_config
@@ -205,7 +211,7 @@ packages:
       name: source_maps
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.10.1"
+    version: "0.10.1+1"
   source_span:
     description:
       name: source_span
@@ -217,7 +223,7 @@ packages:
       name: stack_trace
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.1"
+    version: "1.6.2"
   string_scanner:
     description:
       name: string_scanner
@@ -230,6 +236,12 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  typed_data:
+    description:
+      name: typed_data
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.2"
   utf:
     description:
       name: utf

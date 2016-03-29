@@ -15,14 +15,21 @@ enum StatePhase {
 
 @Directive(
     selector: '[state]',
-    inputs: const ['state', 'stateId'],
     providers: const [StateService]
 )
 class State implements OnChanges {
 
-  String get stateGroup => _stateGroup;
+  String _state;
+  String get state => _state;
+  @Input() void set state(String value) {
+    _state = _component.stateGroup =  value;
+  }
 
+  String _stateId;
   String get stateId => _stateId;
+  @Input() void set stateId(String value) {
+    _stateId = _component.stateId =  value;
+  }
 
   StatefulComponent get component => _component;
 
@@ -31,7 +38,6 @@ class State implements OnChanges {
   final AppViewManager _appView;
   final ExceptionHandler _exceptionHandler;
 
-  String _stateGroup, _stateId;
   StatefulComponent _component;
   StreamSubscription _provideStateSubscription;
 
@@ -53,7 +59,7 @@ class State implements OnChanges {
 
   void _initStreams() {
     _provideStateSubscription = _component.provideState().listen((dynamic state) {
-      _stateService.registerComponentState(_stateGroup, _stateId, state);
+      _stateService.registerComponentState(_state, stateId, state);
     });
 
     _component.onDestroy.take(1).listen((_) {
@@ -63,20 +69,8 @@ class State implements OnChanges {
     });
   }
 
-  void set state(String value) {
-    _stateGroup = value;
-
-    _component.stateGroup = value;
-  }
-
-  void set stateId(String value) {
-    _stateId = value;
-
-    _component.stateId = value;
-  }
-
   void ngOnChanges(Map<String, SimpleChange> changes) {
-    if (_stateGroup != null && _stateId != null) {
+    if (state != null && stateId != null) {
       if (_stateService.isReady) _loadState();
       else _stateService.ready$
         .take(1)
@@ -85,7 +79,7 @@ class State implements OnChanges {
   }
 
   void _loadState() {
-    final Entity stateParts = _stateService.getComponentState(_stateGroup, _stateId);
+    final Entity stateParts = _stateService.getComponentState(state, stateId);
 
     if (stateParts != null) {
       try {
