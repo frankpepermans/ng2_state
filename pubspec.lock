@@ -54,13 +54,13 @@ packages:
       name: code_transformers
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.2"
+    version: "0.4.2+1"
   collection:
     description:
       name: collection
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.1"
+    version: "1.5.0"
   convert:
     description:
       name: convert
@@ -142,10 +142,10 @@ packages:
   ng2_form_components:
     description:
       ref: HEAD
-      resolved-ref: "10ec6e668ca96c5272050adf51c9abc0dceb4d2a"
+      resolved-ref: "45b5b59afc69460f642bf15c159e1ec77ce235d6"
       url: "https://github.com/frankpepermans/ng2_form_components.git"
     source: git
-    version: "0.0.2"
+    version: "0.0.6"
   observe:
     description:
       name: observe
@@ -223,7 +223,7 @@ packages:
       name: stack_trace
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.2"
+    version: "1.6.4"
   string_scanner:
     description:
       name: string_scanner

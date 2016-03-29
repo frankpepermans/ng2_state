@@ -128,10 +128,13 @@ class StateService {
           .flatMapLatest((List<StateContainer> aggregated) =>
             window.onBeforeUnload
               .take(1)
-              .map((_) => aggregated))
-          .listen((List<StateContainer> aggregated) async {
-            await tuple.item1.save(_serializer.outgoing(aggregated), 'state');
-          });
+              .map((_) => _serializer.outgoing(aggregated)))
+          .flatMapLatest((String encoded) =>
+            tuple.item1
+              .save(encoded, 'state')
+              .asStream()
+              .take(1))
+          .listen((_) {});
 
         new rx.Observable<List<StateContainer>>.zip([
           _state$ctrl.stream,

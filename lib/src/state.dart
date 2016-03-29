@@ -58,7 +58,7 @@ class State implements OnChanges {
   }
 
   void _initStreams() {
-    _provideStateSubscription = _component.provideState().listen((dynamic state) {
+    _provideStateSubscription = _component.provideState().listen((Entity state) {
       _stateService.registerComponentState(_state, stateId, state);
     });
 
