@@ -48,6 +48,8 @@ class StateService {
         (DateTime value) => value.millisecondsSinceEpoch
       );
 
+    _instance._initStreams();
+
     return _instance;
   }
 
@@ -64,11 +66,7 @@ class StateService {
     _snapshot$ctrl.add(container);
   }
 
-  void registerState(State state) {
-    _initStreams();
-
-    _states.add(state);
-  }
+  void registerState(State state) => _states.add(state);
 
   void unregisterState(State state) {
     if (_states.contains(state)) _states.remove(state);
