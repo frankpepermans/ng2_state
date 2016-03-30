@@ -48,12 +48,12 @@ class StateService {
         (DateTime value) => value.millisecondsSinceEpoch
       );
 
-    _instance._initStreams();
-
     return _instance;
   }
 
   StateService._internal(this.exceptionHandler);
+
+  void init() => _initStreams();
 
   void registerComponentState(String stateGroup, String stateId, Entity stateParts) {
     final StateContainer container = new StateContainer()
