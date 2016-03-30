@@ -126,7 +126,10 @@ class StateService {
         rx.observable(_aggregatedState$ctrl.stream)
           .tap((List<StateContainer> aggregated) => _snapshot = aggregated)
           .flatMapLatest((List<StateContainer> aggregated) =>
-            window.onBeforeUnload
+            new rx.Observable.merge([
+              window.onBeforeUnload,
+              window.onClick
+            ])
               .take(1)
               .map((_) => _serializer.outgoing(aggregated)))
           .flatMapLatest((String encoded) =>
