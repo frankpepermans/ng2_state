@@ -133,8 +133,9 @@ class StateService {
             tuple.item1
               .save(encoded, 'state')
               .asStream()
-              .take(1))
-          .listen((_) {});
+              .take(1)
+              .map((_) => encoded))
+          .listen((String encoded) => print('encoding completed: $encoded'));
 
         new rx.Observable<List<StateContainer>>.zip([
           _state$ctrl.stream,
