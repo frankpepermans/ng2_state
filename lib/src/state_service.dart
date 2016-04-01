@@ -25,6 +25,7 @@ class StateService {
 
   final EntityFactory<Entity> _factory = new EntityFactory();
   final StreamController<StateContainer> _state$ctrl = new StreamController<StateContainer>();
+  final StreamController<Tuple2<String, String>> _evictState$ctrl = new StreamController<Tuple2<String, String>>();
   final StreamController<List<StateContainer>> _aggregatedState$ctrl = new StreamController<List<StateContainer>>.broadcast();
   final StreamController<bool> _ready$ctrl = new StreamController<bool>.broadcast();
   final List<State> _states = <State>[];
@@ -54,6 +55,8 @@ class StateService {
   StateService._internal(this.exceptionHandler);
 
   void init() => _initStreams();
+
+  void evictState(Tuple2<String, String> tuple) => _evictState$ctrl.add(tuple);
 
   void registerComponentState(String stateGroup, String stateId, Entity stateParts) {
     final StateContainer container = new StateContainer()
@@ -136,14 +139,21 @@ class StateService {
           .listen((String encoded) => print('encoding completed: $encoded'));
 
         new rx.Observable<List<StateContainer>>.zip([
-          _state$ctrl.stream,
+          new rx.Observable.merge([
+            _state$ctrl.stream,
+            _evictState$ctrl.stream
+          ]),
           rx.observable(_aggregatedState$ctrl.stream).startWith([tuple.item2])
-        ], (StateContainer incoming, List<StateContainer> aggregated) {
+        ], (dynamic /*StateContainer|Tuple2<String, String>*/incoming, List<StateContainer> aggregated) {
           final List<StateContainer> copy = new List<StateContainer>.from(aggregated);
 
-          copy.removeWhere((StateContainer container) => container.group == incoming.group && container.id == incoming.id);
+          if (incoming is StateContainer) {
+            copy.removeWhere((StateContainer container) => container.group == incoming.group && container.id == incoming.id);
 
-          copy.add(incoming);
+            copy.add(incoming);
+          } else if (incoming is Tuple2<String, String>) {
+            copy.removeWhere((StateContainer container) => container.group == incoming.item1 && container.id == incoming.item2);
+          }
 
           return copy;
         })
