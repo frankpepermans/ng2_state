@@ -5,7 +5,7 @@ import 'package:dorm/dorm.dart';
 @Ref('ng2_state.stateContainer')
 class StateContainer extends Entity {
 
-  String get refClassName => 'ng2_state.stateContainer';
+  @override String get refClassName => 'ng2_state.stateContainer';
 
   //-----------------------------
   // public properties

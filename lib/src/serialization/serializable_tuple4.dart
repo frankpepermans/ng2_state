@@ -5,7 +5,7 @@ import 'package:dorm/dorm.dart';
 @Ref('ng2_state.serializableTuple4')
 class SerializableTuple4<Q, R, S, T> extends Entity {
 
-  String get refClassName => 'ng2_state.serializableTuple4';
+  @override String get refClassName => 'ng2_state.serializableTuple4';
 
   //-----------------------------
   // public properties

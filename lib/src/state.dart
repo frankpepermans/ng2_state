@@ -69,7 +69,7 @@ class State implements OnChanges {
     });
   }
 
-  void ngOnChanges(Map<String, SimpleChange> changes) {
+  @override void ngOnChanges(Map<String, SimpleChange> changes) {
     if (state != null && stateId != null) {
       if (_stateService.isReady) _loadState();
       else _stateService.ready$

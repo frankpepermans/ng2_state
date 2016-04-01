@@ -8,24 +8,13 @@ import 'package:angular2/angular2.dart';
 import 'package:ng2_form_components/ng2_form_components.dart';
 
 import 'package:ng2_state/ng2_state.dart';
-import 'package:ng2_state/src/state_container.dart';
 
-main() {
+import 'orm_init.dart';
+
+void main() {
   ormInitialize();
 
   bootstrap(AppComponent, const [State]);
-}
-
-void ormInitialize() {
-  try {
-    ListItem.DO_SCAN();
-    StateContainer.DO_SCAN();
-    SerializableTuple2.DO_SCAN();
-    SerializableTuple3.DO_SCAN();
-    SerializableTuple4.DO_SCAN();
-  } catch (error) {
-    print('orm failed...');
-  }
 }
 
 @Component(
