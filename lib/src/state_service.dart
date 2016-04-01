@@ -152,7 +152,7 @@ class StateService {
 
             copy.add(incoming);
           } else if (incoming is Tuple2<String, String>) {
-            copy.removeWhere((StateContainer container) => container.group == incoming.item1 && container.id == incoming.item2);
+            copy.removeWhere((StateContainer container) => container.group == incoming.item1 && (incoming.item2 == null || container.id == incoming.item2));
           }
 
           return copy;
