@@ -46,7 +46,7 @@ class StateService {
       ..addRule(
         DateTime,
         (int value) => (value != null) ? new DateTime.fromMillisecondsSinceEpoch(value, isUtc:true) : null,
-        (DateTime value) => value.millisecondsSinceEpoch
+        (DateTime value) => value?.millisecondsSinceEpoch
       );
 
     return _instance;
