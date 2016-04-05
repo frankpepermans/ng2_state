@@ -130,6 +130,7 @@ class StateService {
             window.onBeforeUnload
               .take(1)
               .map((_) => _serializer.outgoing(aggregated)))
+          .tap((String encoded) => print(encoded))
           .flatMapLatest((String encoded) =>
             tuple.item1
               .save(encoded, 'state')
