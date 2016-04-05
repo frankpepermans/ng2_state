@@ -42,7 +42,9 @@ class StateService {
 
     _instance = new StateService._internal(exceptionHandler);
 
-    _instance._serializer = new SerializerJson()..outgoing([])
+    _instance._serializer = new SerializerJson()
+      ..asDetached = true
+      ..outgoing([])
       ..addRule(
         DateTime,
         (int value) => (value != null) ? new DateTime.fromMillisecondsSinceEpoch(value, isUtc:true) : null,
