@@ -179,7 +179,9 @@ class StateService {
 
         existing = _factory.spawn(result, _serializer, (Entity serverEntity, Entity clientEntity) => ConflictManager.AcceptClient);
 
-        _snapshot = (existing as List<StateContainer>).map((StateContainer container) => container.duplicate());
+        _snapshot = (existing as List<StateContainer>)
+          .map((StateContainer container) => container.duplicate())
+          .toList(growable: false);
       } catch (error) {
         exceptionHandler.call(error, error.stackTrace, 'Failed to reopen last state: $existingState');
       }
