@@ -172,6 +172,8 @@ class StateService {
 
     if (existingState != null) {
       try {
+        print(existingState);
+
         final Iterable<Map<String, dynamic>> result = _serializer.incoming(existingState);
 
         existing = _factory.spawn(result, _serializer, (Entity serverEntity, Entity clientEntity) => ConflictManager.AcceptClient);
