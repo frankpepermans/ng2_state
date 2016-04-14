@@ -6,13 +6,13 @@ packages:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.27.2"
+    version: "0.27.3"
   angular2:
     description:
       name: angular2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0-beta.13.1"
+    version: "2.0.0-beta.15"
   args:
     description:
       name: args
@@ -24,7 +24,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.0"
+    version: "1.10.0"
   barback:
     description:
       name: barback
@@ -60,7 +60,7 @@ packages:
       name: code_transformers
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.2+1"
+    version: "0.4.2+2"
   collection:
     description:
       name: collection
@@ -97,6 +97,12 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.0+4"
+  dnd:
+    description:
+      name: dnd
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   dorm:
     description:
       name: dorm
@@ -138,7 +144,7 @@ packages:
       name: intl
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.7"
+    version: "0.12.7+1"
   lawndart:
     description:
       name: lawndart
@@ -160,10 +166,10 @@ packages:
   ng2_form_components:
     description:
       ref: HEAD
-      resolved-ref: be967fbf88b48ab7473b5150fdc2ad93f47e4193
+      resolved-ref: "2aa504bd290d0e889e5a24368dbac0d670b8b5e6"
       url: "https://github.com/frankpepermans/ng2_form_components.git"
     source: git
-    version: "0.0.28"
+    version: "0.0.93"
   observe:
     description:
       name: observe
@@ -187,7 +193,7 @@ packages:
       name: petitparser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.1"
+    version: "1.5.3"
   plugin:
     description:
       name: plugin
@@ -205,7 +211,7 @@ packages:
       name: protobuf
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.0+1"
+    version: "0.5.1"
   quiver_hashcode:
     description:
       name: quiver_hashcode
@@ -253,7 +259,7 @@ packages:
       name: stack_trace
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.4"
+    version: "1.6.5"
   stream_channel:
     description:
       name: stream_channel
