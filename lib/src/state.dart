@@ -40,6 +40,7 @@ class State implements OnChanges, OnDestroy {
 
   StatefulComponent _component;
   StreamSubscription _provideStateSubscription;
+  StreamSubscription _componentDestroySubscription;
 
   State(@Inject(StateService) this._stateService, @Inject(ElementRef) this._element, @Inject(AppViewManager) this._appView, @Inject(ExceptionHandler) this._exceptionHandler) {
     dynamic component = _appView.getComponent(_element);
@@ -62,11 +63,9 @@ class State implements OnChanges, OnDestroy {
       _stateService.registerComponentState(_state, stateId, state);
     });
 
-    _component.onDestroy.take(1).listen((_) {
-      _provideStateSubscription.cancel();
-
-      _stateService.unregisterState(this);
-    });
+    _componentDestroySubscription = _component.onDestroy
+      .take(1)
+      .listen((_) =>  _remove());
   }
 
   @override void ngOnChanges(Map<String, SimpleChange> changes) {
@@ -78,8 +77,13 @@ class State implements OnChanges, OnDestroy {
     }
   }
 
-  @override void ngOnDestroy() {
+  @override void ngOnDestroy() => _remove();
+
+  void _remove() {
     _provideStateSubscription?.cancel();
+    _componentDestroySubscription?.cancel();
+
+    _stateService.unregisterState(this);
   }
 
   void _loadState() {
