@@ -17,7 +17,7 @@ enum StatePhase {
     selector: '[state]',
     providers: const [StateService]
 )
-class State implements OnChanges {
+class State implements OnChanges, OnDestroy {
 
   String _state;
   String get state => _state;
@@ -76,6 +76,10 @@ class State implements OnChanges {
         .take(1)
         .listen((_) => _loadState());
     }
+  }
+
+  @override void ngOnDestroy() {
+    _provideStateSubscription?.cancel();
   }
 
   void _loadState() {
