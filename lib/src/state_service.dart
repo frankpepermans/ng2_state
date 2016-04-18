@@ -92,7 +92,7 @@ class StateService {
     stopwatch.start();
 
     recordingSession.subscription = _snapshot$ctrl.stream
-      .map((StateContainer stateContainer) => new Tuple2<StateContainer, int>(stateContainer, stopwatch.elapsedMilliseconds))
+      .map((StateContainer stateContainer) => new Tuple2<List<StateContainer>, int>(_snapshot, stopwatch.elapsedMilliseconds))
       .listen(recordingSession.add);
 
     return recordingSession;
@@ -100,20 +100,22 @@ class StateService {
 
   Future<bool> replayRecordingSession(StateRecordingSession recordingSession) {
     final Completer<bool> completer = new Completer<bool>();
-    final StreamController<StateContainer> ctrl = new StreamController<StateContainer>();
+    final StreamController<List<StateContainer>> ctrl = new StreamController<List<StateContainer>>();
 
     recordingSession.subscription.cancel();
 
-    recordingSession.aggregatedStates.forEach((Tuple2<StateContainer, int> tuple) {
+    recordingSession.aggregatedStates.forEach((Tuple2<List<StateContainer>, int> tuple) {
       new Timer(new Duration(milliseconds: tuple.item2), () {
         ctrl.add(tuple.item1);
       });
     });
 
-    ctrl.stream.take(recordingSession.aggregatedStates.length).listen((StateContainer container) {
-      final State match = _states.firstWhere((State state) => state.state == container.group && state.stateId == container.id, orElse: () => null);
+    ctrl.stream.take(recordingSession.aggregatedStates.length).listen((List<StateContainer> containers) {
+      if (containers != null) containers.forEach((StateContainer container) {
+        final State match = _states.firstWhere((State state) => state.state == container.group && state.stateId == container.id, orElse: () => null);
 
-      if (match != null) match.component.receiveState(container.stateParts, StatePhase.REPLAY);
+        if (match != null) match.component.receiveState(container.stateParts, StatePhase.REPLAY);
+      });
     }, onDone: () => completer.complete(true), onError: (error) => completer.complete(false));
 
     return completer.future;
@@ -127,7 +129,9 @@ class StateService {
     _getSnapshot$()
       .listen((Tuple2<storage.Store, List<Entity>> tuple) {
         rx.observable(_aggregatedState$ctrl.stream)
-          .tap((List<StateContainer> aggregated) => _snapshot = aggregated)
+          .tap((List<StateContainer> aggregated) {
+          _snapshot = new List<StateContainer>.unmodifiable(aggregated);
+        })
           .flatMapLatest((List<StateContainer> aggregated) =>
             window.onBeforeUnload
               .take(1)
