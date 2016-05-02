@@ -4,14 +4,14 @@ version: 0.0.21
 environment:
   sdk: '>=1.13.0 <2.0.0'
 dependencies:
-  angular2: 2.0.0-beta.15
+  angular2: any
   browser: ^0.10.0
   dart_to_js_script_rewriter: ^0.1.0
   dorm: any
   lawndart: any
 dev_dependencies:
   ng2_form_components:
-    git: https://github.com/frankpepermans/ng2_form_components.git
+    path: ../ng2_form_components
 transformers:
 - dorm/src/code_transform/meta_transformer
 - angular2:

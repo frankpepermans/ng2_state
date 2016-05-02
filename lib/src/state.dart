@@ -22,29 +22,29 @@ class State implements OnChanges, OnDestroy {
   String _state;
   String get state => _state;
   @Input() void set state(String value) {
-    _state = _component.stateGroup =  value;
+    //_state = _component.stateGroup =  value;
   }
 
   String _stateId;
   String get stateId => _stateId;
   @Input() void set stateId(String value) {
-    _stateId = _component.stateId =  value;
+    //_stateId = _component.stateId =  value;
   }
 
   StatefulComponent get component => _component;
 
   final StateService _stateService;
   final ElementRef _element;
-  final AppViewManager _appView;
+  //final AppViewManager _appView;
   final ExceptionHandler _exceptionHandler;
 
   StatefulComponent _component;
   StreamSubscription _provideStateSubscription;
   StreamSubscription _componentDestroySubscription;
 
-  State(@Inject(StateService) this._stateService, @Inject(ElementRef) this._element, @Inject(AppViewManager) this._appView, @Inject(ExceptionHandler) this._exceptionHandler) {
-    dynamic component = _appView.getComponent(_element);
-
+  State(@Inject(StateService) this._stateService, @Inject(ElementRef) this._element/*, @Inject(AppViewManager) this._appView*/, @Inject(ExceptionHandler) this._exceptionHandler) {
+    dynamic component = null;//_appView.getComponent(_element);
+    return;
     if (component is! StatefulComponent) {
       final Error error = new Error();
 
