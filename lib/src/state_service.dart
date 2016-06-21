@@ -114,7 +114,11 @@ class StateService {
       if (containers != null) containers.forEach((StateContainer container) {
         final State match = _states.firstWhere((State state) => state.state == container.group && state.stateId == container.id, orElse: () => null);
 
-        if (match != null) match.component.receiveState(container.stateParts, StatePhase.REPLAY);
+        if (match != null) {
+          match.component.receiveState(container.stateParts, StatePhase.REPLAY);
+
+          match.component.changeDetector.markForCheck();
+        }
       });
     }, onDone: () => completer.complete(true), onError: (error) => completer.complete(false));
 

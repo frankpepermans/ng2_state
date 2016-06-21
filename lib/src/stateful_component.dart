@@ -10,6 +10,8 @@ import 'package:ng2_state/src/state.dart' show StatePhase;
 
 abstract class StatefulComponent {
 
+  ChangeDetectorRef get changeDetector;
+
   String stateGroup, stateId;
 
   Stream<bool> get onDestroy;
