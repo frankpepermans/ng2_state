@@ -1,6 +1,7 @@
 library ng2_state.state;
 
 import 'dart:async';
+import 'dart:html';
 
 import 'package:angular2/angular2.dart';
 import 'package:dorm/dorm.dart';
@@ -35,33 +36,30 @@ class State implements OnChanges, OnDestroy {
 
   final StateService _stateService;
   final ElementRef _element;
-  final AppViewManager _appView;
   final ExceptionHandler _exceptionHandler;
+  final StatefulComponent _component;
 
-  StatefulComponent _component;
   StreamSubscription _provideStateSubscription;
   StreamSubscription _componentDestroySubscription;
 
-  State(@Inject(StateService) this._stateService, @Inject(ElementRef) this._element, @Inject(AppViewManager) this._appView, @Inject(ExceptionHandler) this._exceptionHandler) {
-    dynamic component = _appView.getComponent(_element);
+  State(
+    @Inject(StateService) StateService stateService,
+    @Inject(ElementRef) ElementRef element,
+    @Inject(ExceptionHandler) this._exceptionHandler) :
+      this._stateService = stateService,
+      this._element = element,
+      this._component = stateService.getComponentForElementRef(element) {
+        if (_component == null) throw new ArgumentError('Missing component reference on ${(element.nativeElement as Element).outerHtml}');
 
-    if (component is! StatefulComponent) {
-      final Error error = new Error();
+        _stateService.registerState(this);
 
-      _exceptionHandler.call(error, error.stackTrace, '$component does not implement Stateful');
-    }
-
-    this._component = component as StatefulComponent;
-
-    _stateService.registerState(this);
-
-    _initStreams();
-  }
+        _initStreams();
+      }
 
   void _initStreams() {
-    _provideStateSubscription = _component.provideState().listen((Entity state) {
-      _stateService.registerComponentState(_state, stateId, state);
-    });
+    _provideStateSubscription = _component
+      .provideState()
+      .listen((Entity state) => _stateService.registerComponentState(_state, stateId, state));
 
     _componentDestroySubscription = _component.onDestroy
       .take(1)

@@ -14,6 +14,8 @@ import 'package:ng2_state/src/state_container.dart';
 import 'package:ng2_state/src/state_recording_session.dart';
 import 'package:ng2_state/src/state.dart';
 
+import 'package:ng2_state/src/stateful_component.dart';
+
 @Injectable()
 class StateService {
 
@@ -28,6 +30,7 @@ class StateService {
   final StreamController<Tuple2<String, String>> _evictState$ctrl = new StreamController<Tuple2<String, String>>();
   final StreamController<List<StateContainer>> _aggregatedState$ctrl = new StreamController<List<StateContainer>>.broadcast();
   final StreamController<bool> _ready$ctrl = new StreamController<bool>.broadcast();
+  final Map<ElementRef, StatefulComponent> _registry = <ElementRef, StatefulComponent>{};
   final List<State> _states = <State>[];
 
   StreamController<StateContainer> _snapshot$ctrl = new StreamController<StateContainer>.broadcast();
@@ -59,6 +62,14 @@ class StateService {
   void init() => _initStreams();
 
   void evictState(Tuple2<String, String> tuple) => _evictState$ctrl.add(tuple);
+
+  StatefulComponent getComponentForElementRef(ElementRef elementRef) => _registry[elementRef];
+
+  void registerComponentElementRef(StatefulComponent component, ElementRef elementRef) {
+    _registry[elementRef] = component;
+  }
+
+  StatefulComponent unregisterComponentElementRef(ElementRef elementRef) => _registry.remove(elementRef);
 
   void registerComponentState(String stateGroup, String stateId, Entity stateParts) {
     final StateContainer container = new StateContainer()

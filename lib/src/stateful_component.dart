@@ -20,4 +20,6 @@ abstract class StatefulComponent {
 
   void receiveState(Entity state, StatePhase phase);
 
+  void registerElement();
+
 }
