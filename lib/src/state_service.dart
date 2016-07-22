@@ -12,7 +12,7 @@ import 'package:lawndart/lawndart.dart' as storage;
 
 import 'package:ng2_state/src/state_container.dart';
 import 'package:ng2_state/src/state_recording_session.dart';
-import 'package:ng2_state/src/state.dart';
+import 'package:ng2_state/src/state_provider.dart' show StateProvider, StatePhase;
 
 import 'package:ng2_state/src/stateful_component.dart';
 
@@ -30,8 +30,8 @@ class StateService {
   final StreamController<Tuple2<String, String>> _evictState$ctrl = new StreamController<Tuple2<String, String>>();
   final StreamController<List<StateContainer>> _aggregatedState$ctrl = new StreamController<List<StateContainer>>.broadcast();
   final StreamController<bool> _ready$ctrl = new StreamController<bool>.broadcast();
-  final Map<ElementRef, StatefulComponent> _registry = <ElementRef, StatefulComponent>{};
-  final List<State> _states = <State>[];
+  final Map<dynamic, StatefulComponent> _registry = <dynamic, StatefulComponent>{};
+  final List<StateProvider> _stateProviders = <StateProvider>[];
 
   StreamController<StateContainer> _snapshot$ctrl = new StreamController<StateContainer>.broadcast();
 
@@ -63,13 +63,13 @@ class StateService {
 
   void evictState(Tuple2<String, String> tuple) => _evictState$ctrl.add(tuple);
 
-  StatefulComponent getComponentForElementRef(ElementRef elementRef) => _registry[elementRef];
+  StatefulComponent getComponentForElementRef(ElementRef elementRef) => _registry[elementRef.nativeElement];
 
   void registerComponentElementRef(StatefulComponent component, ElementRef elementRef) {
-    _registry[elementRef] = component;
+    _registry[elementRef.nativeElement] = component;
   }
 
-  StatefulComponent unregisterComponentElementRef(ElementRef elementRef) => _registry.remove(elementRef);
+  StatefulComponent unregisterComponentElementRef(ElementRef elementRef) => _registry.remove(elementRef.nativeElement);
 
   void registerComponentState(String stateGroup, String stateId, Entity stateParts) {
     final StateContainer container = new StateContainer()
@@ -82,10 +82,10 @@ class StateService {
     _snapshot$ctrl.add(container);
   }
 
-  void registerState(State state) => _states.add(state);
+  void registerState(StateProvider stateProvider) => _stateProviders.add(stateProvider);
 
-  void unregisterState(State state) {
-    if (_states.contains(state)) _states.remove(state);
+  void unregisterState(StateProvider stateProvider) {
+    if (_stateProviders.contains(stateProvider)) _stateProviders.remove(stateProvider);
   }
 
   Entity getComponentState(String stateGroup, String stateId) {
@@ -123,7 +123,7 @@ class StateService {
 
     ctrl.stream.take(recordingSession.aggregatedStates.length).listen((List<StateContainer> containers) {
       if (containers != null) containers.forEach((StateContainer container) {
-        final State match = _states.firstWhere((State state) => state.state == container.group && state.stateId == container.id, orElse: () => null);
+        final StateProvider match = _stateProviders.firstWhere((StateProvider stateProvider) => stateProvider.state == container.group && stateProvider.stateId == container.id, orElse: () => null);
 
         if (match != null) {
           match.component.receiveState(container.stateParts, StatePhase.REPLAY);

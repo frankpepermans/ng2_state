@@ -6,7 +6,7 @@ import 'package:angular2/angular2.dart';
 
 import 'package:dorm/dorm.dart';
 
-import 'package:ng2_state/src/state.dart' show StatePhase;
+import 'package:ng2_state/src/state_provider.dart' show StatePhase;
 
 abstract class StatefulComponent {
 
