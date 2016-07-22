@@ -76,7 +76,11 @@ class StateProvider {
   void _initStreams() {
     _provideStateSubscription = component
       .provideState()
-      .listen((Entity state) => stateService.registerComponentState(_state, _stateId, state));
+      .listen((Entity state) {
+        if (_state == null || _stateId == null || state == null) throw new ArgumentError('unable to provide state! stateGroup: $_state, stateId: $_stateId, component null? ${state == null}');
+
+        stateService.registerComponentState(_state, _stateId, state);
+      });
 
     _componentDestroySubscription = component.onDestroy
       .take(1)

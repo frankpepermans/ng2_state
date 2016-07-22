@@ -145,8 +145,8 @@ class StateService {
       .listen((Tuple2<storage.Store, List<Entity>> tuple) {
         rx.observable(_aggregatedState$ctrl.stream)
           .tap((List<StateContainer> aggregated) {
-          _snapshot = new List<StateContainer>.unmodifiable(aggregated);
-        })
+            _snapshot = new List<StateContainer>.unmodifiable(aggregated);
+          })
           .flatMapLatest((List<StateContainer> aggregated) =>
             window.onBeforeUnload
               .take(1)
