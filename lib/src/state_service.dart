@@ -88,6 +88,9 @@ class StateService {
     if (_stateProviders.contains(stateProvider)) _stateProviders.remove(stateProvider);
   }
 
+  Iterable<StateContainer> findStatesById(String stateId) => _snapshot
+    .where((StateContainer container) => container.id == stateId);
+
   Entity getComponentState(String stateGroup, String stateId) {
     final StateContainer match = _snapshot?.firstWhere((StateContainer container) => container.group == stateGroup && container.id == stateId, orElse: () => null);
 
