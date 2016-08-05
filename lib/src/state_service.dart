@@ -144,24 +144,28 @@ class StateService {
 
     _initStarted = true;
 
+    int i = 0;
+
     _getSnapshot$()
       .listen((Tuple2<storage.Store, List<Entity>> tuple) {
         rx.observable(_aggregatedState$ctrl.stream)
           .tap((List<StateContainer> aggregated) {
             _snapshot = new List<StateContainer>.unmodifiable(aggregated);
           })
+          /*.debounce(const Duration(milliseconds: 20))*/
           .flatMapLatest((List<StateContainer> aggregated) =>
             window.onBeforeUnload
+            /*new Stream.fromIterable(const <bool>[true])*/
               .take(1)
               .map((_) => _serializer.outgoing(aggregated)))
-          .tap((String encoded) => print(encoded))
+          .tap((String encoded) => print('begin encoding ${++i}'))
           .flatMapLatest((String encoded) =>
             tuple.item1
               .save(encoded, 'state')
               .asStream()
               .take(1)
               .map((_) => encoded))
-          .listen((String encoded) => print('encoding completed: $encoded'));
+          .listen((String encoded) => print('encoding completed: $i'));
 
         new rx.Observable<List<StateContainer>>.zip([
           new rx.Observable.merge([
@@ -197,7 +201,7 @@ class StateService {
 
     if (existingState != null) {
       try {
-        print(existingState);
+        print('Loading existing state...');
 
         final Iterable<Map<String, dynamic>> result = _serializer.incoming(existingState);
 
