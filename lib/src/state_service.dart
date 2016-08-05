@@ -152,10 +152,18 @@ class StateService {
           .tap((List<StateContainer> aggregated) {
             _snapshot = new List<StateContainer>.unmodifiable(aggregated);
           })
-          /*.debounce(const Duration(milliseconds: 20))*/
           .flatMapLatest((List<StateContainer> aggregated) =>
-            window.onBeforeUnload
-            /*new Stream.fromIterable(const <bool>[true])*/
+            new rx.Observable.merge(<Stream>[
+              window.onBeforeUnload,
+              new rx.Observable.merge(<Stream>[
+                window.onMouseMove,
+                window.onClick,
+                window.onKeyDown,
+                window.onTouchEnd,
+                window.onScroll
+              ])
+                .debounce(const Duration(milliseconds: 1000))
+            ])
               .take(1)
               .map((_) => _serializer.outgoing(aggregated)))
           .tap((String encoded) => print('begin encoding ${++i}'))
