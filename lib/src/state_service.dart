@@ -144,8 +144,6 @@ class StateService {
 
     _initStarted = true;
 
-    int i = 0;
-
     _getSnapshot$()
       .listen((Tuple2<storage.Store, List<Entity>> tuple) {
         rx.observable(_aggregatedState$ctrl.stream)
@@ -166,14 +164,13 @@ class StateService {
             ])
               .take(1)
               .map((_) => _serializer.outgoing(aggregated)))
-          .tap((String encoded) => print('begin encoding ${++i}'))
           .flatMapLatest((String encoded) =>
             tuple.item1
               .save(encoded, 'state')
               .asStream()
               .take(1)
               .map((_) => encoded))
-          .listen((String encoded) => print('encoding completed: $i'));
+          .listen((String encoded) => print('state persisted'));
 
         new rx.Observable<List<StateContainer>>.zip([
           new rx.Observable.merge([
