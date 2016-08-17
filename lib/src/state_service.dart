@@ -153,14 +153,7 @@ class StateService {
           .flatMapLatest((List<StateContainer> aggregated) =>
             new rx.Observable.merge(<Stream>[
               window.onBeforeUnload,
-              new rx.Observable.merge(<Stream>[
-                window.onMouseMove,
-                window.onClick,
-                window.onKeyDown,
-                window.onTouchEnd,
-                window.onScroll
-              ])
-                .debounce(const Duration(milliseconds: 1000))
+              new Stream.periodic(const Duration(seconds: 1))
             ])
               .take(1)
               .map((_) => _serializer.outgoing(aggregated)))
@@ -170,6 +163,7 @@ class StateService {
               .asStream()
               .take(1)
               .map((_) => encoded))
+          .distinct((String a, String b) => identical(a, b))
           .listen((String encoded) => print('state persisted'));
 
         new rx.Observable<List<StateContainer>>.zip([
