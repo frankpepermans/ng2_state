@@ -16,7 +16,7 @@ abstract class StatefulComponent {
 
   Stream<bool> get onDestroy;
 
-  Stream provideState();
+  Stream<Entity> provideState();
 
   void receiveState(Entity state, StatePhase phase);
 

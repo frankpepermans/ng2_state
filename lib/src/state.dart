@@ -10,13 +10,13 @@ import 'package:ng2_state/src/state_provider.dart' show StateProvider;
 
 @Directive(
     selector: '[state]',
-    providers: const [StateService, StateProvider]
+    providers: const <Type>[StateService, StateProvider]
 )
 class State implements OnDestroy, OnInit {
 
   String _state;
   String get state => _state;
-  @Input() void set state(String value) {
+  @Input() set state(String value) {
     _state = value;
 
     _stateProvider.state = value;
@@ -24,7 +24,7 @@ class State implements OnDestroy, OnInit {
 
   String _stateId;
   String get stateId => _stateId;
-  @Input() void set stateId(String value) {
+  @Input() set stateId(String value) {
     _stateId = value;
 
     _stateProvider.stateId = value;

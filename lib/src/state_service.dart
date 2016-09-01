@@ -25,7 +25,7 @@ class StateService {
   Stream<bool> get ready$ => _ready$ctrl.stream;
   bool isReady = false, _initStarted = false;
 
-  final EntityFactory<Entity> _factory = new EntityFactory();
+  final EntityFactory<Entity> _factory = new EntityFactory<Entity>();
   final StreamController<StateContainer> _state$ctrl = new StreamController<StateContainer>();
   final StreamController<Tuple2<String, String>> _evictState$ctrl = new StreamController<Tuple2<String, String>>();
   final StreamController<List<StateContainer>> _aggregatedState$ctrl = new StreamController<List<StateContainer>>.broadcast();
@@ -35,7 +35,7 @@ class StateService {
 
   StreamController<StateContainer> _snapshot$ctrl = new StreamController<StateContainer>.broadcast();
 
-  SerializerJson _serializer;
+  SerializerJson<Entity, Map<String, dynamic>> _serializer;
   List<StateContainer> _snapshot;
 
   static StateService _instance;
@@ -45,9 +45,9 @@ class StateService {
 
     _instance = new StateService._internal(exceptionHandler);
 
-    _instance._serializer = new SerializerJson()
+    _instance._serializer = new SerializerJson<Entity, Map<String, dynamic>>()
       ..asDetached = true
-      ..outgoing([])
+      ..outgoing(const [])
       ..addRule(
         DateTime,
         (int value) => (value != null) ? new DateTime.fromMillisecondsSinceEpoch(value, isUtc:true) : null,
@@ -58,6 +58,14 @@ class StateService {
   }
 
   StateService._internal(this.exceptionHandler);
+
+  void close() {
+    _state$ctrl.close();
+    _evictState$ctrl.close();
+    _aggregatedState$ctrl.close();
+    _ready$ctrl.close();
+    _snapshot$ctrl.close();
+  }
 
   void init() => _initStreams();
 
@@ -72,6 +80,8 @@ class StateService {
   StatefulComponent unregisterComponentElementRef(ElementRef elementRef) => _registry.remove(elementRef.nativeElement);
 
   void registerComponentState(String stateGroup, String stateId, Entity stateParts) {
+    if (_state$ctrl.isClosed) return;
+
     final StateContainer container = new StateContainer()
       ..group = stateGroup
       ..id = stateId
@@ -134,7 +144,7 @@ class StateService {
           match.component.changeDetector.markForCheck();
         }
       });
-    }, onDone: () => completer.complete(true), onError: (error) => completer.complete(false));
+    }, onDone: () => completer.complete(true), onError: (Error error) => completer.complete(false));
 
     return completer.future;
   }
@@ -151,9 +161,9 @@ class StateService {
             _snapshot = new List<StateContainer>.unmodifiable(aggregated);
           })
           .flatMapLatest((List<StateContainer> aggregated) =>
-            new rx.Observable.merge(<Stream>[
+            new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
               window.onBeforeUnload,
-              new Stream.periodic(const Duration(seconds: 1))
+              new Stream<dynamic>.periodic(const Duration(seconds: 1))
             ])
               .take(1)
               .map((_) => _serializer.outgoing(aggregated)))
@@ -163,15 +173,16 @@ class StateService {
               .asStream()
               .take(1)
               .map((_) => encoded))
+          .tap((_) => print('state triggered'))
           .distinct((String a, String b) => identical(a, b))
           .listen((String encoded) => print('state persisted'));
 
-        new rx.Observable<List<StateContainer>>.zip([
-          new rx.Observable.merge([
+        new rx.Observable<List<StateContainer>>.zip(<Stream<dynamic>>[
+          new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
             _state$ctrl.stream,
             _evictState$ctrl.stream
           ]),
-          rx.observable(_aggregatedState$ctrl.stream).startWith([tuple.item2])
+          rx.observable(_aggregatedState$ctrl.stream).startWith(<List<StateContainer>>[tuple.item2])
         ], (dynamic /*StateContainer|Tuple2<String, String>*/incoming, List<StateContainer> aggregated) {
           final List<StateContainer> copy = new List<StateContainer>.from(aggregated);
 

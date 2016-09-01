@@ -19,7 +19,7 @@ class StateProvider {
 
   String _state;
   String get state => _state;
-  @Input() void set state(String value) {
+  @Input() set state(String value) {
     _state = value;
 
     if (component != null) component.stateGroup = value;
@@ -29,7 +29,7 @@ class StateProvider {
 
   String _stateId;
   String get stateId => _stateId;
-  @Input() void set stateId(String value) {
+  @Input() set stateId(String value) {
     _stateId = value;
 
     if (component != null) component.stateId = value;
@@ -45,8 +45,8 @@ class StateProvider {
 
   bool _isLoadStateTriggered = false, _isProvided = false;
 
-  StreamSubscription _provideStateSubscription;
-  StreamSubscription _componentDestroySubscription;
+  StreamSubscription<Entity> _provideStateSubscription;
+  StreamSubscription<bool> _componentDestroySubscription;
 
   StateProvider(
     @Inject(StateService) this.stateService,
@@ -71,6 +71,8 @@ class StateProvider {
     _componentDestroySubscription?.cancel();
 
     stateService.unregisterState(this);
+
+    //stateService.close();
   }
 
   void _initStreams() {

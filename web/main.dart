@@ -14,13 +14,13 @@ import 'orm_init.dart';
 void main() {
   ormInitialize();
 
-  bootstrap(AppComponent, const [State]);
+  bootstrap(AppComponent, const <Type>[State]);
 }
 
 @Component(
     selector: 'my-app',
     templateUrl: 'app_component.html',
-    directives: const [State, DropDown, AutoComplete]
+    directives: const <Type>[State, DropDown, AutoComplete]
 )
 class AppComponent {
 

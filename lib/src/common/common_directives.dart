@@ -4,10 +4,10 @@ import 'package:ng2_state/ng2_state.dart';
 
 export 'package:ng2_state/src/state.dart';
 
-const List<List<Type>> COMMON_DIRECTIVES = const [
+const List<List<Type>> COMMON_DIRECTIVES = const <List<Type>>[
   STATE_DIRECTIVES
 ];
 
-const List<Type> STATE_DIRECTIVES = const [
+const List<Type> STATE_DIRECTIVES = const <Type>[
   State
 ];
