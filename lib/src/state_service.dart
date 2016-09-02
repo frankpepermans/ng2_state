@@ -35,7 +35,7 @@ class StateService {
 
   StreamController<StateContainer> _snapshot$ctrl = new StreamController<StateContainer>.broadcast();
 
-  SerializerJson<Entity, Map<String, dynamic>> _serializer;
+  SerializerJson<String, Map<String, dynamic>> _serializer;
   List<StateContainer> _snapshot;
 
   static StateService _instance;
@@ -45,7 +45,7 @@ class StateService {
 
     _instance = new StateService._internal(exceptionHandler);
 
-    _instance._serializer = new SerializerJson<Entity, Map<String, dynamic>>()
+    _instance._serializer = new SerializerJson<String, Map<String, dynamic>>()
       ..asDetached = true
       ..outgoing(const [])
       ..addRule(
