@@ -36,7 +36,7 @@ class StateService {
   StreamController<StateContainer> _snapshot$ctrl = new StreamController<StateContainer>.broadcast();
 
   SerializerJson<String, Map<String, dynamic>> _serializer;
-  List<StateContainer> _snapshot;
+  Map<String, StateContainer> _snapshot = <String, StateContainer>{};
 
   static StateService _instance;
 
@@ -98,11 +98,16 @@ class StateService {
     if (_stateProviders.contains(stateProvider)) _stateProviders.remove(stateProvider);
   }
 
+  String _toKey(StateContainer container) => '${container.group}|${container.id}';
+
   Iterable<StateContainer> findStatesById(String stateId) => _snapshot
-    .where((StateContainer container) => container.id == stateId);
+    ?.values
+    ?.where((StateContainer container) => container.id == stateId);
 
   Entity getComponentState(String stateGroup, String stateId) {
-    final StateContainer match = _snapshot?.firstWhere((StateContainer container) => container.group == stateGroup && container.id == stateId, orElse: () => null);
+    if (_snapshot == null) return null;
+
+    final StateContainer match = _snapshot['$stateGroup|$stateId'];
 
     if (match != null) return match.stateParts;
 
@@ -116,7 +121,7 @@ class StateService {
     stopwatch.start();
 
     recordingSession.subscription = _snapshot$ctrl.stream
-      .map((StateContainer stateContainer) => new Tuple2<List<StateContainer>, int>(_snapshot, stopwatch.elapsedMilliseconds))
+      .map((StateContainer stateContainer) => new Tuple2<Map<String, StateContainer>, int>(_snapshot, stopwatch.elapsedMilliseconds))
       .listen(recordingSession.add);
 
     return recordingSession;
@@ -128,9 +133,9 @@ class StateService {
 
     recordingSession.subscription.cancel();
 
-    recordingSession.aggregatedStates.forEach((Tuple2<List<StateContainer>, int> tuple) {
+    recordingSession.aggregatedStates.forEach((Tuple2<Map<String, StateContainer>, int> tuple) {
       new Timer(new Duration(milliseconds: tuple.item2), () {
-        ctrl.add(tuple.item1);
+        ctrl.add(tuple.item1.values);
       });
     });
 
@@ -157,9 +162,7 @@ class StateService {
     _getSnapshot$()
       .listen((Tuple2<storage.Store, List<Entity>> tuple) {
         rx.observable(_aggregatedState$ctrl.stream)
-          .tap((List<StateContainer> aggregated) {
-            _snapshot = new List<StateContainer>.unmodifiable(aggregated);
-          })
+          .tap((List<StateContainer> aggregated) => aggregated.forEach((StateContainer container) => _snapshot[_toKey(container)] = container))
           .flatMapLatest((List<StateContainer> aggregated) =>
             new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
               window.onBeforeUnload,
@@ -175,7 +178,7 @@ class StateService {
               .map((_) => encoded))
           .tap((_) => print('state triggered'))
           .distinct((String a, String b) => identical(a, b))
-          .listen((String encoded) => print('state persisted'));
+          .listen((String encoded) => print('state persisted ${encoded.length}'));
 
         new rx.Observable<List<StateContainer>>.zip(<Stream<dynamic>>[
           new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
@@ -213,11 +216,10 @@ class StateService {
       try {
         print('Loading existing state...');
 
-        final Iterable<Map<String, dynamic>> result = _serializer.incoming(existingState);
-
-        existing = _factory.spawn(result, _serializer, (Entity serverEntity, Entity clientEntity) => ConflictManager.AcceptClient);
-
-        _snapshot = existing as List<StateContainer>;
+        _factory.spawn(_serializer.incoming(existingState), _serializer, (Entity serverEntity, Entity clientEntity) => ConflictManager.AcceptClient)
+        ..forEach((Entity entity) {
+          if (entity is StateContainer) _snapshot[_toKey(entity)] = entity;
+        });
       } catch (error) {
         exceptionHandler.call(error, error.stackTrace, 'Failed to reopen last state: $existingState');
       }

@@ -8,10 +8,10 @@ import 'package:ng2_state/src/state_container.dart';
 
 class StateRecordingSession {
 
-  final List<Tuple2<List<StateContainer>, int>> aggregatedStates = <Tuple2<List<StateContainer>, int>>[];
+  final List<Tuple2<Map<String, StateContainer>, int>> aggregatedStates = <Tuple2<Map<String, StateContainer>, int>>[];
 
-  StreamSubscription<Tuple2<List<StateContainer>, int>> subscription;
+  StreamSubscription<Tuple2<Map<String, StateContainer>, int>> subscription;
 
-  void add(Tuple2<List<StateContainer>, int> container) => aggregatedStates.add(container);
+  void add(Tuple2<Map<String, StateContainer>, int> container) => aggregatedStates.add(container);
 
 }
