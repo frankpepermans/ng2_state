@@ -95,7 +95,13 @@ class StateService {
   void registerState(StateProvider stateProvider) => _stateProviders.add(stateProvider);
 
   void unregisterState(StateProvider stateProvider) {
-    if (_stateProviders.contains(stateProvider)) _stateProviders.remove(stateProvider);
+    if (_stateProviders.contains(stateProvider)) {
+      final String key = '${stateProvider.state}|${stateProvider.stateId}';
+
+      if (_snapshot.containsKey(key)) _snapshot.remove(key);
+
+      _stateProviders.remove(stateProvider);
+    }
   }
 
   String _toKey(StateContainer container) => '${container.group}|${container.id}';
