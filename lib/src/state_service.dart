@@ -37,6 +37,7 @@ class StateService {
 
   SerializerJson<String, Map<String, dynamic>> _serializer;
   Map<String, StateContainer> _snapshot = <String, StateContainer>{};
+  String lastEncodedState = '';
 
   static StateService _instance;
 
@@ -184,6 +185,7 @@ class StateService {
               .map((_) => encoded))
           .tap((_) => print('state triggered'))
           .distinct((String a, String b) => identical(a, b))
+          .tap((String encoded) => lastEncodedState = encoded)
           .listen((String encoded) => print('state persisted ${encoded.length}'));
 
         new rx.Observable<List<StateContainer>>.zip(<Stream<dynamic>>[
@@ -221,6 +223,8 @@ class StateService {
     if (existingState != null) {
       try {
         print('Loading existing state...');
+
+        lastEncodedState = existingState;
 
         _factory.spawn(_serializer.incoming(existingState), _serializer, (Entity serverEntity, Entity clientEntity) => ConflictManager.AcceptClient)
         ..forEach((Entity entity) {
