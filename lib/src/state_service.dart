@@ -97,9 +97,9 @@ class StateService {
 
   void unregisterState(StateProvider stateProvider) {
     if (_stateProviders.contains(stateProvider)) {
-      final String key = '${stateProvider.state}|${stateProvider.stateId}';
+      /*final String key = '${stateProvider.state}|${stateProvider.stateId}';
 
-      if (_snapshot.containsKey(key)) _snapshot.remove(key);
+      if (_snapshot.containsKey(key)) _snapshot.remove(key);*/
 
       _stateProviders.remove(stateProvider);
     }
@@ -176,7 +176,8 @@ class StateService {
               new Stream<dynamic>.periodic(const Duration(seconds: 1))
             ])
               .take(1)
-              .map((_) => _serializer.outgoing(aggregated)))
+              .map((_) => aggregated)
+              .map(_serializer.outgoing))
           .flatMapLatest((String encoded) =>
             tuple.item1
               .save(encoded, 'state')

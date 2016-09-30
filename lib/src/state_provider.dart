@@ -43,7 +43,7 @@ class StateProvider {
   StatefulComponent component;
   State directive;
 
-  bool _isLoadStateTriggered = false, _isProvided = false;
+  bool _isLoadStateTriggered = false, _isProvided = false, _isStateLoaded = false;
 
   StreamSubscription<Entity> _provideStateSubscription;
   StreamSubscription<bool> _componentDestroySubscription;
@@ -81,7 +81,7 @@ class StateProvider {
       .listen((Entity state) {
         if (_state == null || _stateId == null || state == null) throw new ArgumentError('unable to provide state! stateGroup: $_state, stateId: $_stateId, component null? ${state == null}');
 
-        stateService.registerComponentState(_state, _stateId, state);
+        if (_isStateLoaded) stateService.registerComponentState(_state, _stateId, state);
       });
 
     _componentDestroySubscription = component.onDestroy
@@ -105,10 +105,15 @@ class StateProvider {
 
     if (stateParts != null) {
       try {
+        component.stateGroup = state;
+        component.stateId = stateId;
+
         component.receiveState(stateParts, StatePhase.LOAD);
       } catch (error) {
         exceptionHandler.call(error, error.stackTrace);
       }
     }
+
+    _isStateLoaded = true;
   }
 }
