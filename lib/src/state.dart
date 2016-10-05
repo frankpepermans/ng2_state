@@ -14,20 +14,29 @@ import 'package:ng2_state/src/state_provider.dart' show StateProvider;
 )
 class State implements OnDestroy, OnInit {
 
+  bool _hasState = false, _hasStateId = false, _isProvided = false;
+  StatefulComponent _component;
+
   String _state;
   String get state => _state;
   @Input() set state(String value) {
     _state = value;
+    _hasState = value != null;
 
     _stateProvider.state = value;
+
+    _provide();
   }
 
   String _stateId;
   String get stateId => _stateId;
   @Input() set stateId(String value) {
     _stateId = value;
+    _hasStateId = true;
 
     _stateProvider.stateId = value;
+
+    _provide();
   }
 
   final StateProvider _stateProvider;
@@ -40,12 +49,22 @@ class State implements OnDestroy, OnInit {
     @Inject(ElementRef) this._element);
 
   @override void ngOnInit() {
-    final StatefulComponent component = _stateService.getComponentForElementRef(_element);
+    _component = _stateService.getComponentForElementRef(_element);
 
-    if (component == null) throw new ArgumentError('Missing component reference on ${(_element.nativeElement as Element).outerHtml}');
+    if (_component == null) throw new ArgumentError('Missing component reference on ${(_element.nativeElement as Element).outerHtml}');
 
-    _stateProvider.provide(component, state, stateId, directive: this);
+    _stateProvider.initStreams(_component);
+
+    _provide();
   }
 
   @override void ngOnDestroy() => _stateProvider.flush();
+
+  void _provide() {
+    if (!_isProvided && _hasState && _hasStateId && _component != null) {
+      _isProvided = true;
+
+      _stateProvider.provide(_component, state, stateId, directive: this);
+    }
+  }
 }

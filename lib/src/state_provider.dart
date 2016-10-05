@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:angular2/angular2.dart';
 import 'package:dorm/dorm.dart';
+import 'package:rxdart/rxdart.dart' as rx;
 
 import 'package:ng2_state/src/stateful_component.dart' show StatefulComponent;
 import 'package:ng2_state/src/state_service.dart' show StateService;
@@ -47,6 +48,7 @@ class StateProvider {
 
   StreamSubscription<Entity> _provideStateSubscription;
   StreamSubscription<bool> _componentDestroySubscription;
+  StreamSubscription<bool> _loadStateSubscription;
 
   StateProvider(
     @Inject(StateService) this.stateService,
@@ -55,33 +57,34 @@ class StateProvider {
   void provide(StatefulComponent component, String stateGroup, String stateId, {State directive: null}) {
     this.directive = directive;
     this.component = component;
+    this.state = stateGroup;
+    this.stateId = stateId;
 
     stateService.registerState(this);
 
-    _initStreams();
-
     _isProvided = true;
 
-    this.state = stateGroup;
-    this.stateId = stateId;
+    _triggerLoadState();
   }
 
   void flush() {
     _provideStateSubscription?.cancel();
     _componentDestroySubscription?.cancel();
+    _loadStateSubscription?.cancel();
 
     stateService.unregisterState(this);
 
     //stateService.close();
   }
 
-  void _initStreams() {
-    _provideStateSubscription = component
-      .provideState()
+  void initStreams(StatefulComponent component) {
+    _provideStateSubscription = rx.observable(component.provideState())
+      .debounce(const Duration(milliseconds: 20))
+      .where((_) => _isStateLoaded)
       .listen((Entity state) {
         if (_state == null || _stateId == null || state == null) throw new ArgumentError('unable to provide state! stateGroup: $_state, stateId: $_stateId, component null? ${state == null}');
 
-        if (_isStateLoaded) stateService.registerComponentState(_state, _stateId, state);
+        stateService.registerComponentState(_state, _stateId, state);
       });
 
     _componentDestroySubscription = component.onDestroy
@@ -101,6 +104,17 @@ class StateProvider {
   }
 
   void _loadState() {
+    if (stateService.isFullyRegistered(this)) _commitState(true);
+    else {
+      _loadStateSubscription = rx.observable(stateService.updated$)
+        .startWith(const <bool>[true])
+        .where((_) => stateService.isFullyRegistered(this))
+        .take(1)
+        .listen(_commitState);
+    }
+  }
+
+  void _commitState(bool _) {
     final Entity stateParts = stateService.getComponentState(state, stateId);
 
     if (stateParts != null) {

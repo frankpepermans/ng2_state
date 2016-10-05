@@ -23,9 +23,11 @@ class StateService {
 
   String stateName = 'ng2_state';
   Stream<bool> get ready$ => _ready$ctrl.stream;
+  Stream<bool> get updated$ => _aggregatedState$ctrl.stream.map((_) => true);
   bool isReady = false, _initStarted = false;
 
   final EntityFactory<Entity> _factory = new EntityFactory<Entity>();
+  final StreamController<StateProvider> _stateProvider$ctrl = new StreamController<StateProvider>.broadcast();
   final StreamController<StateContainer> _state$ctrl = new StreamController<StateContainer>();
   final StreamController<Tuple2<String, String>> _evictState$ctrl = new StreamController<Tuple2<String, String>>();
   final StreamController<List<StateContainer>> _aggregatedState$ctrl = new StreamController<List<StateContainer>>.broadcast();
@@ -61,6 +63,7 @@ class StateService {
   StateService._internal(this.exceptionHandler);
 
   void close() {
+    _stateProvider$ctrl.close();
     _state$ctrl.close();
     _evictState$ctrl.close();
     _aggregatedState$ctrl.close();
@@ -93,23 +96,25 @@ class StateService {
     _snapshot$ctrl.add(container);
   }
 
-  void registerState(StateProvider stateProvider) => _stateProviders.add(stateProvider);
+  void registerState(StateProvider stateProvider) => _stateProvider$ctrl.add(stateProvider);
 
   void unregisterState(StateProvider stateProvider) {
     if (_stateProviders.contains(stateProvider)) {
-      /*final String key = '${stateProvider.state}|${stateProvider.stateId}';
+      final String key = '${stateProvider.state}|${stateProvider.stateId}';
 
-      if (_snapshot.containsKey(key)) _snapshot.remove(key);*/
+      if (_snapshot.containsKey(key)) _snapshot.remove(key);
 
       _stateProviders.remove(stateProvider);
     }
   }
 
+  bool isFullyRegistered(StateProvider stateProvider) => _snapshot.containsKey('${stateProvider.state}|${stateProvider.stateId}');
+
   String _toKey(StateContainer container) => '${container.group}|${container.id}';
 
   Iterable<StateContainer> findStatesById(String stateId) => _snapshot
     ?.values
-    ?.where((StateContainer container) => container.id == stateId);
+    ?.where((StateContainer container) => container != null && container.id == stateId);
 
   Entity getComponentState(String stateGroup, String stateId) {
     if (_snapshot == null) return null;
@@ -166,10 +171,14 @@ class StateService {
 
     _initStarted = true;
 
+    _stateProvider$ctrl.stream
+      .listen((StateProvider provider) => _stateProviders.add(provider));
+
     _getSnapshot$()
-      .listen((Tuple2<storage.Store, List<Entity>> tuple) {
-        rx.observable(_aggregatedState$ctrl.stream)
-          .tap((List<StateContainer> aggregated) => aggregated.forEach((StateContainer container) => _snapshot[_toKey(container)] = container))
+      .listen((Tuple2<storage.Store, List<StateContainer>> tuple) {
+        rx.observable(_aggregatedState$ctrl.stream).startWith(<List<StateContainer>>[tuple.item2])
+          .tap((List<StateContainer> aggregated) => aggregated
+            .forEach((StateContainer container) => _snapshot[_toKey(container)] = container))
           .flatMapLatest((List<StateContainer> aggregated) =>
             new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
               window.onBeforeUnload,
@@ -184,7 +193,6 @@ class StateService {
               .asStream()
               .take(1)
               .map((_) => encoded))
-          .tap((_) => print('state triggered'))
           .distinct((String a, String b) => identical(a, b))
           .tap((String encoded) => lastEncodedState = encoded)
           .listen((String encoded) => print('state persisted ${encoded.length}'));
@@ -192,21 +200,32 @@ class StateService {
         new rx.Observable<List<StateContainer>>.zip(<Stream<dynamic>>[
           new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
             _state$ctrl.stream,
-            _evictState$ctrl.stream
+            _evictState$ctrl.stream,
+            _stateProvider$ctrl.stream
           ]),
-          rx.observable(_aggregatedState$ctrl.stream).startWith(<List<StateContainer>>[tuple.item2])
+          rx.observable(_aggregatedState$ctrl.stream)
+            .startWith(<List<StateContainer>>[tuple.item2])
         ], (dynamic /*StateContainer|Tuple2<String, String>*/incoming, List<StateContainer> aggregated) {
-          final List<StateContainer> copy = new List<StateContainer>.from(aggregated);
-
           if (incoming is StateContainer) {
+            final List<StateContainer> copy = new List<StateContainer>.from(aggregated);
+
             copy.removeWhere((StateContainer container) => container.group == incoming.group && container.id == incoming.id);
 
             copy.add(incoming);
+
+            return copy;
           } else if (incoming is Tuple2<String, String>) {
+            final List<StateContainer> copy = new List<StateContainer>.from(aggregated);
+
             copy.removeWhere((StateContainer container) => container.group == incoming.item1 && (incoming.item2 == null || container.id == incoming.item2));
+
+            return copy;
+          } else if (incoming is StateProvider) {
+            _snapshot.putIfAbsent('${incoming.state}|${incoming.stateId}', () => aggregated
+              .firstWhere((StateContainer container) => container.group == incoming.state && container.id == incoming.stateId, orElse: () => null));
           }
 
-          return copy;
+          return aggregated;
         })
           .listen(_aggregatedState$ctrl.add);
 
@@ -216,10 +235,10 @@ class StateService {
       });
   }
 
-  Stream<Tuple2<storage.Store, List<Entity>>> _getSnapshot$() async* {
+  Stream<Tuple2<storage.Store, List<StateContainer>>> _getSnapshot$() async* {
     final storage.Store db = await storage.Store.open('ng2_db', stateName);
     final String existingState = await db.getByKey('state');
-    List<Entity> existing = <StateContainer>[];
+    List<StateContainer> existing = <StateContainer>[];
 
     if (existingState != null) {
       try {
@@ -227,16 +246,15 @@ class StateService {
 
         lastEncodedState = existingState;
 
-        _factory.spawn(_serializer.incoming(existingState), _serializer, (Entity serverEntity, Entity clientEntity) => ConflictManager.AcceptClient)
-        ..forEach((Entity entity) {
-          if (entity is StateContainer) _snapshot[_toKey(entity)] = entity;
-        });
+        existing = _factory.spawn(_serializer.incoming(existingState), _serializer, (Entity serverEntity, Entity clientEntity) => ConflictManager.AcceptClient)
+          .where((Entity entity) => entity is StateContainer)
+          .toList(growable: false);
       } catch (error) {
         exceptionHandler.call(error, error.stackTrace, 'Failed to reopen last state: $existingState');
       }
     }
 
-    yield new Tuple2<storage.Store, List<Entity>>(db, existing);
+    yield new Tuple2<storage.Store, List<StateContainer>>(db, existing);
   }
 
 }
