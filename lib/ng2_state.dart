@@ -12,3 +12,4 @@ export 'package:ng2_state/src/serialization/serializable_tuple2.dart' show Seria
 export 'package:ng2_state/src/serialization/serializable_tuple3.dart' show SerializableTuple3;
 export 'package:ng2_state/src/serialization/serializable_tuple4.dart' show SerializableTuple4;
 export 'package:ng2_state/src/serialization/serializable_tuple5.dart' show SerializableTuple5;
+export 'package:ng2_state/src/serialization/serializable_tuple6.dart' show SerializableTuple6;
