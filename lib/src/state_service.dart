@@ -158,7 +158,7 @@ class StateService {
         if (match != null) {
           match.component.receiveState(container.stateParts, StatePhase.REPLAY);
 
-          match.component.changeDetector.markForCheck();
+          //match.component.changeDetector.markForCheck();
         }
       });
     }, onDone: () => completer.complete(true), onError: (Error error) => completer.complete(false));
@@ -248,7 +248,7 @@ class StateService {
 
         existing = _factory.spawn(_serializer.incoming(existingState), _serializer, (Entity serverEntity, Entity clientEntity) => ConflictManager.AcceptClient)
           .where((Entity entity) => entity is StateContainer)
-          .toList(growable: false);
+          .toList(growable: false) as List<StateContainer>;
       } catch (error) {
         exceptionHandler.call(error, error.stackTrace, 'Failed to reopen last state: $existingState');
       }
