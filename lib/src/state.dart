@@ -1,7 +1,5 @@
 library ng2_state.state;
 
-import 'dart:html';
-
 import 'package:angular2/angular2.dart';
 
 import 'package:ng2_state/src/stateful_component.dart' show StatefulComponent;
@@ -15,7 +13,8 @@ import 'package:ng2_state/src/state_provider.dart' show StateProvider;
 class State implements OnDestroy, OnInit {
 
   bool _hasState = false, _hasStateId = false, _isProvided = false;
-  StatefulComponent _component;
+
+  final StatefulComponent _component;
 
   String _state;
   String get state => _state;
@@ -40,19 +39,12 @@ class State implements OnDestroy, OnInit {
   }
 
   final StateProvider _stateProvider;
-  final StateService _stateService;
-  final ElementRef _element;
 
   State(
-    @Inject(StateProvider) this._stateProvider,
-    @Inject(StateService) this._stateService,
-    @Inject(ElementRef) this._element);
+    @Inject(StatefulComponent) this._component,
+    @Inject(StateProvider) this._stateProvider);
 
   @override void ngOnInit() {
-    _component = _stateService.getComponentForElementRef(_element);
-
-    if (_component == null) throw new ArgumentError('Missing component reference on ${(_element.nativeElement as Element).outerHtml}');
-
     _stateProvider.initStreams(_component);
 
     _provide();
@@ -61,7 +53,7 @@ class State implements OnDestroy, OnInit {
   @override void ngOnDestroy() => _stateProvider.flush();
 
   void _provide() {
-    if (!_isProvided && _hasState && _hasStateId && _component != null) {
+    if (!_isProvided && _hasState && _hasStateId) {
       _isProvided = true;
 
       _stateProvider.provide(_component, state, stateId, directive: this);

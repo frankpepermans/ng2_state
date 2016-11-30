@@ -14,8 +14,6 @@ import 'package:ng2_state/src/state_container.dart';
 import 'package:ng2_state/src/state_recording_session.dart';
 import 'package:ng2_state/src/state_provider.dart' show StateProvider, StatePhase;
 
-import 'package:ng2_state/src/stateful_component.dart';
-
 @Injectable()
 class StateService {
 
@@ -32,7 +30,6 @@ class StateService {
   final StreamController<Tuple2<String, String>> _evictState$ctrl = new StreamController<Tuple2<String, String>>();
   final StreamController<List<StateContainer>> _aggregatedState$ctrl = new StreamController<List<StateContainer>>.broadcast();
   final StreamController<bool> _ready$ctrl = new StreamController<bool>.broadcast();
-  final Map<dynamic, StatefulComponent> _registry = <dynamic, StatefulComponent>{};
   final List<StateProvider> _stateProviders = <StateProvider>[];
 
   StreamController<StateContainer> _snapshot$ctrl = new StreamController<StateContainer>.broadcast();
@@ -49,7 +46,6 @@ class StateService {
     _instance = new StateService._internal(exceptionHandler);
 
     _instance._serializer = new SerializerJson<String, Map<String, dynamic>>()
-      ..asDetached = true
       ..outgoing(const [])
       ..addRule(
         DateTime,
@@ -74,14 +70,6 @@ class StateService {
   void init() => _initStreams();
 
   void evictState(Tuple2<String, String> tuple) => _evictState$ctrl.add(tuple);
-
-  StatefulComponent getComponentForElementRef(ElementRef elementRef) => _registry[elementRef.nativeElement];
-
-  void registerComponentElementRef(StatefulComponent component, ElementRef elementRef) {
-    _registry[elementRef.nativeElement] = component;
-  }
-
-  StatefulComponent unregisterComponentElementRef(ElementRef elementRef) => _registry.remove(elementRef.nativeElement);
 
   void registerComponentState(String stateGroup, String stateId, Entity stateParts) {
     if (_state$ctrl.isClosed) return;
