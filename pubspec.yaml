@@ -12,7 +12,7 @@ dependencies:
   lawndart: any
 dev_dependencies:
   ng2_form_components:
-    git: git@github.com:frankpepermans/ng2_state.git
+    git: git@github.com:frankpepermans/ng2_form_components.git
 transformers:
 - dorm/src/code_transform/meta_transformer
 - angular2:
