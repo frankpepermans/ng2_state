@@ -22,12 +22,13 @@ class StateService {
   String stateName = 'ng2_state';
   Stream<bool> get ready$ => _ready$ctrl.stream;
   Stream<bool> get updated$ => _aggregatedState$ctrl.stream.map((_) => true);
+  Stream<Tuple2<String, String>> get evict$ => _evictState$ctrl.stream;
   bool isReady = false, _initStarted = false;
 
   final EntityFactory<Entity> _factory = new EntityFactory<Entity>();
   final StreamController<StateProvider> _stateProvider$ctrl = new StreamController<StateProvider>.broadcast();
   final StreamController<StateContainer> _state$ctrl = new StreamController<StateContainer>();
-  final StreamController<Tuple2<String, String>> _evictState$ctrl = new StreamController<Tuple2<String, String>>();
+  final StreamController<Tuple2<String, String>> _evictState$ctrl = new StreamController<Tuple2<String, String>>.broadcast();
   final StreamController<List<StateContainer>> _aggregatedState$ctrl = new StreamController<List<StateContainer>>.broadcast();
   final StreamController<bool> _ready$ctrl = new StreamController<bool>.broadcast();
   final List<StateProvider> _stateProviders = <StateProvider>[];
