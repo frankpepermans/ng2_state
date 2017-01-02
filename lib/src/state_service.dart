@@ -1,16 +1,16 @@
 library ng2_state.state_service;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:html';
 
 import 'package:angular2/angular2.dart';
 
-import 'package:dorm/dorm.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:tuple/tuple.dart';
 import 'package:lawndart/lawndart.dart' as storage;
 
-import 'package:ng2_state/src/state_container.dart';
+import 'package:ng2_state/src/state_container.g.dart';
 import 'package:ng2_state/src/state_recording_session.dart';
 import 'package:ng2_state/src/state_provider.dart' show StateProvider, StatePhase;
 
@@ -25,7 +25,6 @@ class StateService {
   Stream<Tuple2<String, String>> get evict$ => _evictState$ctrl.stream;
   bool isReady = false, _initStarted = false;
 
-  final EntityFactory<Entity> _factory = new EntityFactory<Entity>();
   final StreamController<StateProvider> _stateProvider$ctrl = new StreamController<StateProvider>.broadcast();
   final StreamController<StateContainer> _state$ctrl = new StreamController<StateContainer>();
   final StreamController<Tuple2<String, String>> _evictState$ctrl = new StreamController<Tuple2<String, String>>.broadcast();
@@ -35,7 +34,6 @@ class StateService {
 
   StreamController<StateContainer> _snapshot$ctrl = new StreamController<StateContainer>.broadcast();
 
-  SerializerJson<String, Map<String, dynamic>> _serializer;
   Map<String, StateContainer> _snapshot = <String, StateContainer>{};
   String lastEncodedState = '';
 
@@ -45,14 +43,6 @@ class StateService {
     if (_instance != null) return _instance;
 
     _instance = new StateService._internal(exceptionHandler);
-
-    _instance._serializer = new SerializerJson<String, Map<String, dynamic>>()
-      ..outgoing(const [])
-      ..addRule(
-        DateTime,
-        (int value) => (value != null) ? new DateTime.fromMillisecondsSinceEpoch(value, isUtc:true) : null,
-        (DateTime value) => value?.millisecondsSinceEpoch
-      );
 
     return _instance;
   }
@@ -72,13 +62,14 @@ class StateService {
 
   void evictState(Tuple2<String, String> tuple) => _evictState$ctrl.add(tuple);
 
-  void registerComponentState(String stateGroup, String stateId, Entity stateParts) {
+  void registerComponentState(String stateGroup, String stateId, Comparable<dynamic> stateParts) {
     if (_state$ctrl.isClosed) return;
 
-    final StateContainer container = new StateContainer()
-      ..group = stateGroup
-      ..id = stateId
-      ..stateParts = stateParts;
+    final StateContainer container = new StateContainerImmutable(
+        group: stateGroup,
+        id: stateId,
+        stateParts: stateParts
+    );
 
     _state$ctrl.add(container);
 
@@ -105,7 +96,7 @@ class StateService {
     ?.values
     ?.where((StateContainer container) => container != null && container.id == stateId);
 
-  Entity getComponentState(String stateGroup, String stateId) {
+  Comparable<dynamic> getComponentState(String stateGroup, String stateId) {
     if (_snapshot == null) return null;
 
     final StateContainer match = _snapshot['$stateGroup|$stateId'];
@@ -175,7 +166,11 @@ class StateService {
             ])
               .take(1)
               .map((_) => aggregated)
-              .map(_serializer.outgoing))
+              .map((_) => JSON.encode(_, toEncodable: (dynamic entry) {
+                  if (entry is DateTime) return '|T|${entry.millisecondsSinceEpoch}';
+
+                  return entry;
+              })))
           .flatMapLatest((String encoded) =>
             tuple.item1
               .save(encoded, 'state')
@@ -235,9 +230,11 @@ class StateService {
 
         lastEncodedState = existingState;
 
-        existing = _factory.spawn(_serializer.incoming(existingState), _serializer, (Entity serverEntity, Entity clientEntity) => ConflictManager.AcceptClient)
-          .where((Entity entity) => entity is StateContainer)
-          .toList(growable: false) as List<StateContainer>;
+        existing = JSON.decode(existingState, reviver: (K, V) {
+          if (V is String && V.length > 3 && V.substring(0, 3) == '|T|') return new DateTime.fromMicrosecondsSinceEpoch(int.parse(V.split('|').last));
+
+          return V;
+        });
       } catch (error) {
         exceptionHandler.call(error, error.stackTrace, 'Failed to reopen last state: $existingState');
       }

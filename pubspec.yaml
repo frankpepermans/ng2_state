@@ -8,13 +8,15 @@ dependencies:
   angular2: ^2.0.0-beta.18
   browser: ^0.10.0
   dart_to_js_script_rewriter: ^0.1.0
-  dorm: any
   lawndart: any
+  optics:
+    git: git@github.com:frankpepermans/optics.git
 dev_dependencies:
+  test: any
+  build_runner: any
   ng2_form_components:
     git: git@github.com:frankpepermans/ng2_form_components.git
 transformers:
-- dorm/src/code_transform/meta_transformer
 - angular2:
     platform_directives:
     - 'package:angular2/common.dart#COMMON_DIRECTIVES'

@@ -3,7 +3,6 @@ library ng2_state.state_provider;
 import 'dart:async';
 
 import 'package:angular2/angular2.dart';
-import 'package:dorm/dorm.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 
 import 'package:ng2_state/src/stateful_component.dart' show StatefulComponent;
@@ -46,7 +45,7 @@ class StateProvider {
 
   bool _isLoadStateTriggered = false, _isProvided = false, _isStateLoaded = false;
 
-  StreamSubscription<Entity> _provideStateSubscription;
+  StreamSubscription<Comparable<dynamic>> _provideStateSubscription;
   StreamSubscription<bool> _componentDestroySubscription;
   StreamSubscription<bool> _loadStateSubscription;
 
@@ -81,7 +80,7 @@ class StateProvider {
     _provideStateSubscription = rx.observable(component.provideState())
       .debounce(const Duration(milliseconds: 20))
       .where((_) => _isStateLoaded)
-      .listen((Entity state) {
+      .listen((Comparable<dynamic> state) {
         if (_state == null || _stateId == null || state == null) throw new ArgumentError('unable to provide state! stateGroup: $_state, stateId: $_stateId, component null? ${state == null}');
 
         stateService.registerComponentState(_state, _stateId, state);
@@ -115,7 +114,7 @@ class StateProvider {
   }
 
   void _commitState(bool _) {
-    final Entity stateParts = stateService.getComponentState(state, stateId);
+    final Comparable<dynamic> stateParts = stateService.getComponentState(state, stateId);
 
     if (stateParts != null) {
       try {

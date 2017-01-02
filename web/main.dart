@@ -9,11 +9,7 @@ import 'package:ng2_form_components/ng2_form_components.dart';
 
 import 'package:ng2_state/ng2_state.dart';
 
-import 'orm_init.dart';
-
 void main() {
-  ormInitialize();
-
   bootstrap(AppComponent, const <Type>[State]);
 }
 

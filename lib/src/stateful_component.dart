@@ -4,8 +4,6 @@ import 'dart:async';
 
 import 'package:angular2/angular2.dart';
 
-import 'package:dorm/dorm.dart';
-
 import 'package:ng2_state/src/state_provider.dart' show StatePhase;
 
 abstract class StatefulComponent {
@@ -14,8 +12,8 @@ abstract class StatefulComponent {
 
   Stream<bool> get onDestroy;
 
-  Stream<Entity> provideState();
+  Stream<Comparable<dynamic>> provideState();
 
-  void receiveState(Entity state, StatePhase phase);
+  void receiveState(Comparable<dynamic> state, StatePhase phase);
 
 }
