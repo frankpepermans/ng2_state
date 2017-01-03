@@ -165,7 +165,7 @@ class StateService {
 
     _getSnapshot$()
       .listen((Tuple2<storage.Store, List<StateContainer>> tuple) {
-        rx.observable(_aggregatedState$ctrl.stream).startWith(<List<StateContainer>>[tuple.item2])
+        rx.observable(_aggregatedState$ctrl.stream).startWith(tuple.item2)
           .tap((List<StateContainer> aggregated) => aggregated
             .forEach((StateContainer container) => _snapshot[_toKey(container)] = container))
           .flatMapLatest((List<StateContainer> aggregated) =>
@@ -186,15 +186,15 @@ class StateService {
           .tap((String encoded) => lastEncodedState = encoded)
           .listen((String encoded) => print('state persisted ${encoded.length}'));
 
-        new rx.Observable<List<StateContainer>>.zip(<Stream<dynamic>>[
+        rx.Observable.zipTwo(
           new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
             _state$ctrl.stream,
             _evictState$ctrl.stream,
             _stateProvider$ctrl.stream
           ]),
           rx.observable(_aggregatedState$ctrl.stream)
-            .startWith(<List<StateContainer>>[tuple.item2])
-        ], (dynamic /*StateContainer|Tuple2<String, String>*/incoming, List<StateContainer> aggregated) {
+            .startWith(tuple.item2)
+        , (dynamic /*StateContainer|Tuple2<String, String>*/incoming, List<StateContainer> aggregated) {
           if (incoming is StateContainer) {
             final List<StateContainer> copy = new List<StateContainer>.from(aggregated);
 

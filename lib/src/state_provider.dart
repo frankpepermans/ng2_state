@@ -107,7 +107,7 @@ class StateProvider {
     if (stateService.isFullyRegistered(this)) _commitState(true);
     else {
       _loadStateSubscription = rx.observable(stateService.updated$)
-        .startWith(const <bool>[true])
+        .startWith(true)
         .where((_) => stateService.isFullyRegistered(this))
         .take(1)
         .listen(_commitState);
