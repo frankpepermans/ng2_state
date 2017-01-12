@@ -11,10 +11,13 @@ dependencies:
   dorm: any
   lawndart: any
 dev_dependencies:
+  build_runner: '>=0.1.0'
+  source_gen: '>=0.5.0'
   ng2_form_components:
     git: git@github.com:frankpepermans/ng2_form_components.git
+dependency_overrides:
+  build: '^0.6.0'
 transformers:
-- dorm/src/code_transform/meta_transformer
 - angular2:
     platform_directives:
     - 'package:angular2/common.dart#COMMON_DIRECTIVES'

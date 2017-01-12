@@ -10,7 +10,7 @@ import 'package:rxdart/rxdart.dart' as rx;
 import 'package:tuple/tuple.dart';
 import 'package:lawndart/lawndart.dart' as storage;
 
-import 'package:ng2_state/src/state_container.dart';
+import 'package:ng2_state/src/state_container.g.dart';
 import 'package:ng2_state/src/state_recording_session.dart';
 import 'package:ng2_state/src/state_provider.dart' show StateProvider, StatePhase;
 
@@ -184,7 +184,7 @@ class StateService {
               .map((_) => encoded))
           .distinct((String a, String b) => identical(a, b))
           .tap((String encoded) => lastEncodedState = encoded)
-          .listen((String encoded) => print('state persisted ${encoded.length}'));
+          .listen((String encoded) => print('state persisted ${encoded.length}'), onError: ([_]) => print('state failed'));
 
         rx.Observable.zipTwo(
           new rx.Observable<dynamic>.merge(<Stream<dynamic>>[

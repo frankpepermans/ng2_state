@@ -4,7 +4,7 @@ import 'dart:async';
 
 import 'package:tuple/tuple.dart';
 
-import 'package:ng2_state/src/state_container.dart';
+import 'package:ng2_state/src/state_container.g.dart';
 
 class StateRecordingSession {
 
