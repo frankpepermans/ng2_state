@@ -23,6 +23,7 @@ class SerializableTuple4<Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple4_item1;
 
   final DormProxy<Q> _item1 = new DormProxy<Q>(ITEM1, ITEM1_SYMBOL);
+  @override
   Q get item1 => _item1.value;
   set item1(Q value) {
     _item1.value = value;
@@ -34,6 +35,7 @@ class SerializableTuple4<Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple4_item2;
 
   final DormProxy<R> _item2 = new DormProxy<R>(ITEM2, ITEM2_SYMBOL);
+  @override
   R get item2 => _item2.value;
   set item2(R value) {
     _item2.value = value;
@@ -45,6 +47,7 @@ class SerializableTuple4<Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple4_item3;
 
   final DormProxy<S> _item3 = new DormProxy<S>(ITEM3, ITEM3_SYMBOL);
+  @override
   S get item3 => _item3.value;
   set item3(S value) {
     _item3.value = value;
@@ -56,6 +59,7 @@ class SerializableTuple4<Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple4_item4;
 
   final DormProxy<T> _item4 = new DormProxy<T>(ITEM4, ITEM4_SYMBOL);
+  @override
   T get item4 => _item4.value;
   set item4(T value) {
     _item4.value = value;
@@ -65,6 +69,7 @@ class SerializableTuple4<Q, R, S, T> extends Entity
   static void DO_SCAN/*<Q, R, S, T>*/([String _R, Entity _C()]) {
     _R ??= 'i112ng2_state_lib_src_serialization_serializable_tuple4';
     _C ??= () => new SerializableTuple4<Q, R, S, T>();
+    Entity.DO_SCAN(_R, _C);
     Entity.ASSEMBLER.scan(
         _R,
         _C,
@@ -106,6 +111,6 @@ class SerializableTuple4<Q, R, S, T> extends Entity
     Entity.ASSEMBLER.registerProxies(
         this, <DormProxy<dynamic>>[_item1, _item2, _item3, _item4]);
   }
-  static SerializableTuple4<Q, R, S, T> construct/*<Q, R, S, T>*/() =>
+  static SerializableTuple4/*<Q, R, S, T>*/ construct/*<Q, R, S, T>*/() =>
       new SerializableTuple4<Q, R, S, T>();
 }

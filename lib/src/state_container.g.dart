@@ -21,6 +21,7 @@ class StateContainer extends Entity with sup.StateContainer {
       #i112ng2_state_lib_src_state_container_group;
 
   final DormProxy<String> _group = new DormProxy<String>(GROUP, GROUP_SYMBOL);
+  @override
   String get group => _group.value;
   set group(String value) {
     _group.value = value;
@@ -31,6 +32,7 @@ class StateContainer extends Entity with sup.StateContainer {
   static const Symbol ID_SYMBOL = #i112ng2_state_lib_src_state_container_id;
 
   final DormProxy<String> _id = new DormProxy<String>(ID, ID_SYMBOL);
+  @override
   String get id => _id.value;
   set id(String value) {
     _id.value = value;
@@ -43,6 +45,7 @@ class StateContainer extends Entity with sup.StateContainer {
 
   final DormProxy<Entity> _stateParts =
       new DormProxy<Entity>(STATEPARTS, STATEPARTS_SYMBOL);
+  @override
   Entity get stateParts => _stateParts.value;
   set stateParts(Entity value) {
     _stateParts.value = value;
@@ -52,6 +55,7 @@ class StateContainer extends Entity with sup.StateContainer {
   static void DO_SCAN /**/ ([String _R, Entity _C()]) {
     _R ??= 'i112ng2_state_lib_src_state_container';
     _C ??= () => new StateContainer();
+    Entity.DO_SCAN(_R, _C);
     Entity.ASSEMBLER.scan(
         _R,
         _C,
@@ -90,5 +94,5 @@ class StateContainer extends Entity with sup.StateContainer {
     Entity.ASSEMBLER
         .registerProxies(this, <DormProxy<dynamic>>[_group, _id, _stateParts]);
   }
-  static StateContainer construct /**/ () => new StateContainer();
+  static StateContainer /**/ construct /**/ () => new StateContainer();
 }

@@ -1,7 +1,7 @@
 import 'package:dorm/dorm.dart';
 
 @dorm
-abstract class SerializableTuple5<P, Q, R, S, T> extends Entity {
+abstract class SerializableTuple5<P, Q, R, S, T> implements Entity {
   P get item1;
   Q get item2;
   R get item3;

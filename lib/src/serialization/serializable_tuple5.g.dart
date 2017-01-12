@@ -23,6 +23,7 @@ class SerializableTuple5<P, Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple5_item1;
 
   final DormProxy<P> _item1 = new DormProxy<P>(ITEM1, ITEM1_SYMBOL);
+  @override
   P get item1 => _item1.value;
   set item1(P value) {
     _item1.value = value;
@@ -34,6 +35,7 @@ class SerializableTuple5<P, Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple5_item2;
 
   final DormProxy<Q> _item2 = new DormProxy<Q>(ITEM2, ITEM2_SYMBOL);
+  @override
   Q get item2 => _item2.value;
   set item2(Q value) {
     _item2.value = value;
@@ -45,6 +47,7 @@ class SerializableTuple5<P, Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple5_item3;
 
   final DormProxy<R> _item3 = new DormProxy<R>(ITEM3, ITEM3_SYMBOL);
+  @override
   R get item3 => _item3.value;
   set item3(R value) {
     _item3.value = value;
@@ -56,6 +59,7 @@ class SerializableTuple5<P, Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple5_item4;
 
   final DormProxy<S> _item4 = new DormProxy<S>(ITEM4, ITEM4_SYMBOL);
+  @override
   S get item4 => _item4.value;
   set item4(S value) {
     _item4.value = value;
@@ -67,6 +71,7 @@ class SerializableTuple5<P, Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple5_item5;
 
   final DormProxy<T> _item5 = new DormProxy<T>(ITEM5, ITEM5_SYMBOL);
+  @override
   T get item5 => _item5.value;
   set item5(T value) {
     _item5.value = value;
@@ -76,6 +81,7 @@ class SerializableTuple5<P, Q, R, S, T> extends Entity
   static void DO_SCAN/*<P, Q, R, S, T>*/([String _R, Entity _C()]) {
     _R ??= 'i112ng2_state_lib_src_serialization_serializable_tuple5';
     _C ??= () => new SerializableTuple5<P, Q, R, S, T>();
+    Entity.DO_SCAN(_R, _C);
     Entity.ASSEMBLER.scan(
         _R,
         _C,
@@ -124,6 +130,6 @@ class SerializableTuple5<P, Q, R, S, T> extends Entity
     Entity.ASSEMBLER.registerProxies(
         this, <DormProxy<dynamic>>[_item1, _item2, _item3, _item4, _item5]);
   }
-  static SerializableTuple5<P, Q, R, S, T> construct/*<P, Q, R, S, T>*/() =>
+  static SerializableTuple5/*<P, Q, R, S, T>*/ construct/*<P, Q, R, S, T>*/() =>
       new SerializableTuple5<P, Q, R, S, T>();
 }

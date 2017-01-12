@@ -1,7 +1,7 @@
 import 'package:dorm/dorm.dart';
 
 @dorm
-abstract class StateContainer extends Entity {
+abstract class StateContainer implements Entity {
   @Id('')
   String get group;
   @Id('')

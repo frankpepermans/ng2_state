@@ -23,6 +23,7 @@ class SerializableTuple6<O, P, Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple6_item1;
 
   final DormProxy<O> _item1 = new DormProxy<O>(ITEM1, ITEM1_SYMBOL);
+  @override
   O get item1 => _item1.value;
   set item1(O value) {
     _item1.value = value;
@@ -34,6 +35,7 @@ class SerializableTuple6<O, P, Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple6_item2;
 
   final DormProxy<P> _item2 = new DormProxy<P>(ITEM2, ITEM2_SYMBOL);
+  @override
   P get item2 => _item2.value;
   set item2(P value) {
     _item2.value = value;
@@ -45,6 +47,7 @@ class SerializableTuple6<O, P, Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple6_item3;
 
   final DormProxy<Q> _item3 = new DormProxy<Q>(ITEM3, ITEM3_SYMBOL);
+  @override
   Q get item3 => _item3.value;
   set item3(Q value) {
     _item3.value = value;
@@ -56,6 +59,7 @@ class SerializableTuple6<O, P, Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple6_item4;
 
   final DormProxy<R> _item4 = new DormProxy<R>(ITEM4, ITEM4_SYMBOL);
+  @override
   R get item4 => _item4.value;
   set item4(R value) {
     _item4.value = value;
@@ -67,6 +71,7 @@ class SerializableTuple6<O, P, Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple6_item5;
 
   final DormProxy<S> _item5 = new DormProxy<S>(ITEM5, ITEM5_SYMBOL);
+  @override
   S get item5 => _item5.value;
   set item5(S value) {
     _item5.value = value;
@@ -78,6 +83,7 @@ class SerializableTuple6<O, P, Q, R, S, T> extends Entity
       #i112ng2_state_lib_src_serialization_serializable_tuple6_item6;
 
   final DormProxy<T> _item6 = new DormProxy<T>(ITEM6, ITEM6_SYMBOL);
+  @override
   T get item6 => _item6.value;
   set item6(T value) {
     _item6.value = value;
@@ -87,6 +93,7 @@ class SerializableTuple6<O, P, Q, R, S, T> extends Entity
   static void DO_SCAN/*<O, P, Q, R, S, T>*/([String _R, Entity _C()]) {
     _R ??= 'i112ng2_state_lib_src_serialization_serializable_tuple6';
     _C ??= () => new SerializableTuple6<O, P, Q, R, S, T>();
+    Entity.DO_SCAN(_R, _C);
     Entity.ASSEMBLER.scan(
         _R,
         _C,
@@ -142,7 +149,6 @@ class SerializableTuple6<O, P, Q, R, S, T> extends Entity
     Entity.ASSEMBLER.registerProxies(this,
         <DormProxy<dynamic>>[_item1, _item2, _item3, _item4, _item5, _item6]);
   }
-  static SerializableTuple6<O, P, Q, R, S, T>
-      construct/*<O, P, Q, R, S, T>*/() =>
-          new SerializableTuple6<O, P, Q, R, S, T>();
+  static SerializableTuple6/*<O, P, Q, R, S, T>*/ construct/*<O, P, Q, R, S, T>*/() =>
+      new SerializableTuple6<O, P, Q, R, S, T>();
 }

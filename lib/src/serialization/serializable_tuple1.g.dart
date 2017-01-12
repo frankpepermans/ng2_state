@@ -22,6 +22,7 @@ class SerializableTuple1<T> extends Entity with sup.SerializableTuple1<T> {
       #i112ng2_state_lib_src_serialization_serializable_tuple1_item1;
 
   final DormProxy<T> _item1 = new DormProxy<T>(ITEM1, ITEM1_SYMBOL);
+  @override
   T get item1 => _item1.value;
   set item1(T value) {
     _item1.value = value;
@@ -31,6 +32,7 @@ class SerializableTuple1<T> extends Entity with sup.SerializableTuple1<T> {
   static void DO_SCAN/*<T>*/([String _R, Entity _C()]) {
     _R ??= 'i112ng2_state_lib_src_serialization_serializable_tuple1';
     _C ??= () => new SerializableTuple1<T>();
+    Entity.DO_SCAN(_R, _C);
     Entity.ASSEMBLER.scan(
         _R,
         _C,
@@ -50,6 +52,6 @@ class SerializableTuple1<T> extends Entity with sup.SerializableTuple1<T> {
   SerializableTuple1() : super() {
     Entity.ASSEMBLER.registerProxies(this, <DormProxy<dynamic>>[_item1]);
   }
-  static SerializableTuple1<T> construct/*<T>*/() =>
+  static SerializableTuple1/*<T>*/ construct/*<T>*/() =>
       new SerializableTuple1<T>();
 }
