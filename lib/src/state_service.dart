@@ -235,7 +235,7 @@ class StateService {
 
         lastEncodedState = existingState;
 
-        existing = _factory.spawn(_serializer.incoming(existingState), _serializer, (Entity serverEntity, Entity clientEntity) => ConflictManager.AcceptClient)
+        existing = _factory.spawn(_serializer.incoming(existingState), _serializer)
           .where((Entity entity) => entity is StateContainer)
           .toList(growable: false) as List<StateContainer>;
       } catch (error) {

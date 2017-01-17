@@ -56,37 +56,27 @@ class StateContainer extends Entity with sup.StateContainer {
     _R ??= 'i112ng2_state_lib_src_state_container';
     _C ??= () => new StateContainer();
     Entity.DO_SCAN(_R, _C);
-    Entity.ASSEMBLER.scan(
-        _R,
-        _C,
-        const <Map<String, dynamic>>[
-          const <String, dynamic>{
-            'symbol': StateContainer.GROUP_SYMBOL,
-            'name': 'group',
-            'type': String,
-            'typeStaticStr': 'String',
-            'metatags': const <dynamic>[
-              const Id(''),
-            ]
-          },
-          const <String, dynamic>{
-            'symbol': StateContainer.ID_SYMBOL,
-            'name': 'id',
-            'type': String,
-            'typeStaticStr': 'String',
-            'metatags': const <dynamic>[
-              const Id(''),
-            ]
-          },
-          const <String, dynamic>{
-            'symbol': StateContainer.STATEPARTS_SYMBOL,
-            'name': 'stateParts',
-            'type': Entity,
-            'typeStaticStr': 'Entity',
-            'metatags': const <dynamic>[]
-          },
-        ],
-        true);
+    Entity.ASSEMBLER.scan(_R, _C, const <PropertyData>[
+      const PropertyData(
+          symbol: StateContainer.GROUP_SYMBOL,
+          name: 'group',
+          type: String,
+          metatags: const <dynamic>[
+            const Id(''),
+          ]),
+      const PropertyData(
+          symbol: StateContainer.ID_SYMBOL,
+          name: 'id',
+          type: String,
+          metatags: const <dynamic>[
+            const Id(''),
+          ]),
+      const PropertyData(
+          symbol: StateContainer.STATEPARTS_SYMBOL,
+          name: 'stateParts',
+          type: Entity,
+          metatags: const <dynamic>[]),
+    ]);
   }
 
   /// Ctr

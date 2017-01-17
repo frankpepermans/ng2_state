@@ -94,54 +94,38 @@ class SerializableTuple6<O, P, Q, R, S, T> extends Entity
     _R ??= 'i112ng2_state_lib_src_serialization_serializable_tuple6';
     _C ??= () => new SerializableTuple6<O, P, Q, R, S, T>();
     Entity.DO_SCAN(_R, _C);
-    Entity.ASSEMBLER.scan(
-        _R,
-        _C,
-        const <Map<String, dynamic>>[
-          const <String, dynamic>{
-            'symbol': SerializableTuple6.ITEM1_SYMBOL,
-            'name': 'item1',
-            'type': dynamic,
-            'typeStaticStr': 'O',
-            'metatags': const <dynamic>[]
-          },
-          const <String, dynamic>{
-            'symbol': SerializableTuple6.ITEM2_SYMBOL,
-            'name': 'item2',
-            'type': dynamic,
-            'typeStaticStr': 'P',
-            'metatags': const <dynamic>[]
-          },
-          const <String, dynamic>{
-            'symbol': SerializableTuple6.ITEM3_SYMBOL,
-            'name': 'item3',
-            'type': dynamic,
-            'typeStaticStr': 'Q',
-            'metatags': const <dynamic>[]
-          },
-          const <String, dynamic>{
-            'symbol': SerializableTuple6.ITEM4_SYMBOL,
-            'name': 'item4',
-            'type': dynamic,
-            'typeStaticStr': 'R',
-            'metatags': const <dynamic>[]
-          },
-          const <String, dynamic>{
-            'symbol': SerializableTuple6.ITEM5_SYMBOL,
-            'name': 'item5',
-            'type': dynamic,
-            'typeStaticStr': 'S',
-            'metatags': const <dynamic>[]
-          },
-          const <String, dynamic>{
-            'symbol': SerializableTuple6.ITEM6_SYMBOL,
-            'name': 'item6',
-            'type': dynamic,
-            'typeStaticStr': 'T',
-            'metatags': const <dynamic>[]
-          },
-        ],
-        true);
+    Entity.ASSEMBLER.scan(_R, _C, const <PropertyData>[
+      const PropertyData(
+          symbol: SerializableTuple6.ITEM1_SYMBOL,
+          name: 'item1',
+          type: dynamic,
+          metatags: const <dynamic>[]),
+      const PropertyData(
+          symbol: SerializableTuple6.ITEM2_SYMBOL,
+          name: 'item2',
+          type: dynamic,
+          metatags: const <dynamic>[]),
+      const PropertyData(
+          symbol: SerializableTuple6.ITEM3_SYMBOL,
+          name: 'item3',
+          type: dynamic,
+          metatags: const <dynamic>[]),
+      const PropertyData(
+          symbol: SerializableTuple6.ITEM4_SYMBOL,
+          name: 'item4',
+          type: dynamic,
+          metatags: const <dynamic>[]),
+      const PropertyData(
+          symbol: SerializableTuple6.ITEM5_SYMBOL,
+          name: 'item5',
+          type: dynamic,
+          metatags: const <dynamic>[]),
+      const PropertyData(
+          symbol: SerializableTuple6.ITEM6_SYMBOL,
+          name: 'item6',
+          type: dynamic,
+          metatags: const <dynamic>[]),
+    ]);
   }
 
   /// Ctr

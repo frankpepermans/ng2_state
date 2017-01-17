@@ -33,19 +33,13 @@ class SerializableTuple1<T> extends Entity with sup.SerializableTuple1<T> {
     _R ??= 'i112ng2_state_lib_src_serialization_serializable_tuple1';
     _C ??= () => new SerializableTuple1<T>();
     Entity.DO_SCAN(_R, _C);
-    Entity.ASSEMBLER.scan(
-        _R,
-        _C,
-        const <Map<String, dynamic>>[
-          const <String, dynamic>{
-            'symbol': SerializableTuple1.ITEM1_SYMBOL,
-            'name': 'item1',
-            'type': dynamic,
-            'typeStaticStr': 'T',
-            'metatags': const <dynamic>[]
-          },
-        ],
-        true);
+    Entity.ASSEMBLER.scan(_R, _C, const <PropertyData>[
+      const PropertyData(
+          symbol: SerializableTuple1.ITEM1_SYMBOL,
+          name: 'item1',
+          type: dynamic,
+          metatags: const <dynamic>[]),
+    ]);
   }
 
   /// Ctr
