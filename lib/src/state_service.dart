@@ -172,6 +172,7 @@ class StateService {
             new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
               window.onBeforeUnload,
               new Stream<dynamic>.periodic(const Duration(seconds: 1))
+                  .take(1)
             ])
               .take(1)
               .map((_) => aggregated)
