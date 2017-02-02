@@ -166,7 +166,7 @@ class StateService {
     _getSnapshot$()
       .listen((Tuple2<storage.Store, List<StateContainer>> tuple) {
         rx.observable(_aggregatedState$ctrl.stream).startWith(tuple.item2)
-          .tap((List<StateContainer> aggregated) => aggregated
+          .call(onData:(List<StateContainer> aggregated) => aggregated
             .forEach((StateContainer container) => _snapshot[_toKey(container)] = container))
           .flatMapLatest((List<StateContainer> aggregated) =>
             new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
@@ -183,7 +183,7 @@ class StateService {
               .take(1)
               .map((_) => encoded))
           .distinct((String a, String b) => identical(a, b))
-          .tap((String encoded) => lastEncodedState = encoded)
+          .call(onData:(String encoded) => lastEncodedState = encoded)
           .listen((String encoded) => print('state persisted ${encoded.length}'), onError: ([_]) => print('state failed'));
 
         rx.Observable.zip2(
