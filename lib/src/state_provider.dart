@@ -41,11 +41,29 @@ class StateProvider {
   final StateService stateService;
   final ExceptionHandler exceptionHandler;
 
-  StatefulComponent component;
+  StatefulComponent _component;
+  StatefulComponent get component => _component;
+  set component(StatefulComponent value) {
+    _component = value;
+
+    _providerPipeSubscription?.cancel();
+
+    if (value != null) _providerPipeSubscription = value.provideState()
+        .listen(_providerStream.add, onError: (Error error, StackTrace stackTrace) => _providerStream.addError(error, stackTrace), onDone: () {
+      _providerStream.close();
+
+      _providerPipeSubscription?.cancel();
+      _provideStateSubscription?.cancel();
+    });
+  }
+
   State directive;
 
   bool _isLoadStateTriggered = false, _isProvided = false, _isStateLoaded = false;
 
+  final rx.BehaviourSubject<Entity> _providerStream = new rx.BehaviourSubject<Entity>();
+
+  StreamSubscription<Entity> _providerPipeSubscription;
   StreamSubscription<Entity> _provideStateSubscription;
   StreamSubscription<bool> _componentDestroySubscription;
   StreamSubscription<bool> _loadStateSubscription;
@@ -68,6 +86,9 @@ class StateProvider {
   }
 
   void flush() {
+    _providerStream.close();
+
+    _providerPipeSubscription?.cancel();
     _provideStateSubscription?.cancel();
     _componentDestroySubscription?.cancel();
     _loadStateSubscription?.cancel();
@@ -78,15 +99,6 @@ class StateProvider {
   }
 
   void initStreams(StatefulComponent component) {
-    _provideStateSubscription = rx.observable(component.provideState())
-      .debounce(const Duration(milliseconds: 20))
-      .where((_) => _isStateLoaded)
-      .listen((Entity state) {
-        if (_state == null || _stateId == null || state == null) throw new ArgumentError('unable to provide state! stateGroup: $_state, stateId: $_stateId, component null? ${state == null}');
-
-        stateService.registerComponentState(_state, _stateId, state);
-      });
-
     _componentDestroySubscription = component.onDestroy
       .take(1)
       .listen((_) =>  flush());
@@ -129,5 +141,13 @@ class StateProvider {
     }
 
     _isStateLoaded = true;
+
+    _provideStateSubscription = rx.observable(_providerStream.stream)
+        .debounce(const Duration(milliseconds: 20))
+        .listen((Entity state) {
+      if (_state == null || _stateId == null || state == null) throw new ArgumentError('unable to provide state! stateGroup: $_state, stateId: $_stateId, component null? ${state == null}');
+
+      stateService.registerComponentState(_state, _stateId, state);
+    });
   }
 }
