@@ -90,7 +90,7 @@ class SerializableTuple6<O, P, Q, R, S, T> extends Entity
   }
 
   /// DO_SCAN
-  static void DO_SCAN/*<O, P, Q, R, S, T>*/([String _R, Entity _C()]) {
+  static void DO_SCAN<O, P, Q, R, S, T>([String _R, Entity _C()]) {
     _R ??= 'i112ng2_state_lib_src_serialization_serializable_tuple6';
     _C ??= () => new SerializableTuple6<O, P, Q, R, S, T>();
     Entity.DO_SCAN(_R, _C);
@@ -133,6 +133,6 @@ class SerializableTuple6<O, P, Q, R, S, T> extends Entity
     Entity.ASSEMBLER.registerProxies(this,
         <DormProxy<dynamic>>[_item1, _item2, _item3, _item4, _item5, _item6]);
   }
-  static SerializableTuple6/*<O, P, Q, R, S, T>*/ construct/*<O, P, Q, R, S, T>*/() =>
+  static SerializableTuple6<O, P, Q, R, S, T> construct<O, P, Q, R, S, T>() =>
       new SerializableTuple6<O, P, Q, R, S, T>();
 }

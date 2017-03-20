@@ -54,7 +54,7 @@ class SerializableTuple3<R, S, T> extends Entity
   }
 
   /// DO_SCAN
-  static void DO_SCAN/*<R, S, T>*/([String _R, Entity _C()]) {
+  static void DO_SCAN<R, S, T>([String _R, Entity _C()]) {
     _R ??= 'i112ng2_state_lib_src_serialization_serializable_tuple3';
     _C ??= () => new SerializableTuple3<R, S, T>();
     Entity.DO_SCAN(_R, _C);
@@ -82,6 +82,6 @@ class SerializableTuple3<R, S, T> extends Entity
     Entity.ASSEMBLER
         .registerProxies(this, <DormProxy<dynamic>>[_item1, _item2, _item3]);
   }
-  static SerializableTuple3/*<R, S, T>*/ construct/*<R, S, T>*/() =>
-      new SerializableTuple3<R, S, T>();
+  static SerializableTuple3<R, S, T>
+      construct<R, S, T>() => new SerializableTuple3<R, S, T>();
 }

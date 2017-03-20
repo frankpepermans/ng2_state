@@ -52,7 +52,7 @@ class StateContainer extends Entity with sup.StateContainer {
   }
 
   /// DO_SCAN
-  static void DO_SCAN /**/ ([String _R, Entity _C()]) {
+  static void DO_SCAN([String _R, Entity _C()]) {
     _R ??= 'i112ng2_state_lib_src_state_container';
     _C ??= () => new StateContainer();
     Entity.DO_SCAN(_R, _C);
@@ -84,5 +84,5 @@ class StateContainer extends Entity with sup.StateContainer {
     Entity.ASSEMBLER
         .registerProxies(this, <DormProxy<dynamic>>[_group, _id, _stateParts]);
   }
-  static StateContainer /**/ construct /**/ () => new StateContainer();
+  static StateContainer construct() => new StateContainer();
 }
