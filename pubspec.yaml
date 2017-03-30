@@ -5,18 +5,19 @@ environment:
   sdk: '>=1.21.0 <2.0.0'
 dependencies:
   analyzer: ^0.29.1
-  angular2: ^2.0.0-beta.18
+  angular2: ^3.0.0-alpha+1
   browser: ^0.10.0
   dart_to_js_script_rewriter: ^0.1.0
   dorm: any
   lawndart: any
 dev_dependencies:
+  code_transformers: '0.5.1'
   build_runner: '>=0.1.0'
   source_gen: '>=0.5.0'
   ng2_form_components:
     git: git@github.com:frankpepermans/ng2_form_components.git
 dependency_overrides:
-  build: '^0.6.0'
+  build: '^0.7.0'
 transformers:
 - angular2:
     platform_directives:
