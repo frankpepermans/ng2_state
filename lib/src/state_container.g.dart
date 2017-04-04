@@ -79,10 +79,17 @@ class StateContainer extends Entity with sup.StateContainer {
     ]);
   }
 
-  /// Ctr
+  /// Constructor
   StateContainer() : super() {
     Entity.ASSEMBLER
         .registerProxies(this, <DormProxy<dynamic>>[_group, _id, _stateParts]);
   }
+
+  /// Internal constructor
   static StateContainer construct() => new StateContainer();
+
+  /// Duplicates the [StateContainer] and any recusrive entities to a new [StateContainer]
+  @override
+  StateContainer duplicate({List<Symbol> ignoredSymbols: null}) =>
+      super.duplicate(ignoredSymbols: ignoredSymbols);
 }

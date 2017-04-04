@@ -60,11 +60,18 @@ class SerializableTuple2<S, T> extends Entity
     ]);
   }
 
-  /// Ctr
+  /// Constructor
   SerializableTuple2() : super() {
     Entity.ASSEMBLER
         .registerProxies(this, <DormProxy<dynamic>>[_item1, _item2]);
   }
+
+  /// Internal constructor
   static SerializableTuple2<S, T>
       construct<S, T>() => new SerializableTuple2<S, T>();
+
+  /// Duplicates the [SerializableTuple2] and any recusrive entities to a new [SerializableTuple2]
+  @override
+  SerializableTuple2<S, T> duplicate({List<Symbol> ignoredSymbols: null}) =>
+      super.duplicate(ignoredSymbols: ignoredSymbols);
 }

@@ -94,11 +94,19 @@ class SerializableTuple4<Q, R, S, T> extends Entity
     ]);
   }
 
-  /// Ctr
+  /// Constructor
   SerializableTuple4() : super() {
     Entity.ASSEMBLER.registerProxies(
         this, <DormProxy<dynamic>>[_item1, _item2, _item3, _item4]);
   }
+
+  /// Internal constructor
   static SerializableTuple4<Q, R, S, T>
       construct<Q, R, S, T>() => new SerializableTuple4<Q, R, S, T>();
+
+  /// Duplicates the [SerializableTuple4] and any recusrive entities to a new [SerializableTuple4]
+  @override
+  SerializableTuple4<Q, R, S, T> duplicate(
+          {List<Symbol> ignoredSymbols: null}) =>
+      super.duplicate(ignoredSymbols: ignoredSymbols);
 }

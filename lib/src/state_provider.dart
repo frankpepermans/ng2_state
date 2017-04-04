@@ -61,7 +61,7 @@ class StateProvider {
 
   bool _isLoadStateTriggered = false, _isProvided = false, _isStateLoaded = false;
 
-  final rx.BehaviourSubject<Entity> _providerStream = new rx.BehaviourSubject<Entity>();
+  final rx.BehaviorSubject<Entity> _providerStream = new rx.BehaviorSubject<Entity>();
 
   StreamSubscription<Entity> _providerPipeSubscription;
   StreamSubscription<Entity> _provideStateSubscription;

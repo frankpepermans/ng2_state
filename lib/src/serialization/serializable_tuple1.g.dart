@@ -42,9 +42,16 @@ class SerializableTuple1<T> extends Entity with sup.SerializableTuple1<T> {
     ]);
   }
 
-  /// Ctr
+  /// Constructor
   SerializableTuple1() : super() {
     Entity.ASSEMBLER.registerProxies(this, <DormProxy<dynamic>>[_item1]);
   }
+
+  /// Internal constructor
   static SerializableTuple1<T> construct<T>() => new SerializableTuple1<T>();
+
+  /// Duplicates the [SerializableTuple1] and any recusrive entities to a new [SerializableTuple1]
+  @override
+  SerializableTuple1<T> duplicate({List<Symbol> ignoredSymbols: null}) =>
+      super.duplicate(ignoredSymbols: ignoredSymbols);
 }
