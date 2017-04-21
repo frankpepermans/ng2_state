@@ -185,7 +185,7 @@ class StateService {
               .map((_) => encoded))
           .distinct((String a, String b) => identical(a, b))
           .call(onData:(String encoded) => lastEncodedState = encoded)
-          .listen((String encoded) => print('state persisted ${encoded.length}'), onError: ([_]) => print('state failed'));
+          .listen((String encoded) => print('state persisted ${encoded.length}'), onError: ([_]) => print('state failed: $_, ${_.stackTrace}'));
 
         rx.Observable.zip2(
           new rx.Observable<dynamic>.merge(<Stream<dynamic>>[

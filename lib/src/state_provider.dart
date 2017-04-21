@@ -10,17 +10,14 @@ import 'package:ng2_state/src/stateful_component.dart' show StatefulComponent;
 import 'package:ng2_state/src/state_service.dart' show StateService;
 import 'package:ng2_state/src/state.dart';
 
-enum StatePhase {
-  REPLAY,
-  LOAD
-}
+enum StatePhase { REPLAY, LOAD }
 
 @Injectable()
 class StateProvider {
-
   String _state;
   String get state => _state;
-  @Input() set state(String value) {
+  @Input()
+  set state(String value) {
     _state = value;
 
     if (component != null) component.stateGroup = value;
@@ -30,7 +27,8 @@ class StateProvider {
 
   String _stateId;
   String get stateId => _stateId;
-  @Input() set stateId(String value) {
+  @Input()
+  set stateId(String value) {
     _stateId = value;
 
     if (component != null) component.stateId = value;
@@ -48,31 +46,37 @@ class StateProvider {
 
     _providerPipeSubscription?.cancel();
 
-    if (value != null) _providerPipeSubscription = value.provideState()
-        .listen(_providerStream.add, onError: (Error error, StackTrace stackTrace) => _providerStream.addError(error, stackTrace), onDone: () {
-      _providerStream.close();
+    if (value != null)
+      _providerPipeSubscription = value.provideState().listen(
+          _providerStream.add,
+          onError: (Error error, StackTrace stackTrace) =>
+              _providerStream.addError(error, stackTrace), onDone: () {
+        _providerStream.close();
 
-      _providerPipeSubscription?.cancel();
-      _provideStateSubscription?.cancel();
-    });
+        _providerPipeSubscription?.cancel();
+        _provideStateSubscription?.cancel();
+      });
   }
 
   State directive;
 
-  bool _isLoadStateTriggered = false, _isProvided = false, _isStateLoaded = false;
+  bool _isLoadStateTriggered = false,
+      _isProvided = false,
+      _isStateLoaded = false;
 
-  final rx.BehaviorSubject<Entity> _providerStream = new rx.BehaviorSubject<Entity>();
+  final rx.BehaviorSubject<Entity> _providerStream =
+      new rx.BehaviorSubject<Entity>();
 
   StreamSubscription<Entity> _providerPipeSubscription;
   StreamSubscription<Entity> _provideStateSubscription;
   StreamSubscription<bool> _componentDestroySubscription;
   StreamSubscription<bool> _loadStateSubscription;
 
-  StateProvider(
-    @Inject(StateService) this.stateService,
-    @Inject(ExceptionHandler) this.exceptionHandler);
+  StateProvider(@Inject(StateService) this.stateService,
+      @Inject(ExceptionHandler) this.exceptionHandler);
 
-  void provide(StatefulComponent component, String stateGroup, String stateId, {State directive: null}) {
+  void provide(StatefulComponent component, String stateGroup, String stateId,
+      {State directive: null}) {
     this.directive = directive;
     this.component = component;
     this.state = stateGroup;
@@ -99,30 +103,38 @@ class StateProvider {
   }
 
   void initStreams(StatefulComponent component) {
-    _componentDestroySubscription = component.onDestroy
-      .take(1)
-      .listen((_) =>  flush());
+    _componentDestroySubscription =
+        component.onDestroy.take(1).listen((_) => flush());
   }
 
   void _triggerLoadState() {
-    if (_isProvided && !_isLoadStateTriggered && state != null && stateId != null && component != null) {
+    if (_isProvided &&
+        !_isLoadStateTriggered &&
+        state != null &&
+        stateId != null &&
+        component != null) {
       _isLoadStateTriggered = true;
 
-      if (stateService.isReady) _loadState();
-      else stateService.ready$
-        .take(1)
-        .listen((_) => _loadState());
+      if (stateService.isReady)
+        _loadState();
+      else
+        stateService.ready$.take(1).listen((_) => _loadState());
     }
   }
 
   void _loadState() {
-    if (stateService.isFullyRegistered(this)) _commitState(true);
+    if (stateService.isFullyRegistered(this))
+      _commitState(true);
     else {
-      _loadStateSubscription = rx.observable(stateService.updated$)
-        .startWith(true)
-        .where((_) => stateService.isFullyRegistered(this))
-        .take(1)
-        .listen(_commitState);
+      _loadStateSubscription = new rx.Observable<bool>.amb(<Stream<bool>>[
+        rx
+            .observable(stateService.updated$)
+            .startWith(true)
+            .where((_) => stateService.isFullyRegistered(this)),
+        new Future<Null>.delayed(const Duration(seconds: 1))
+            .asStream()
+            .map((_) => true)
+      ]).take(1).listen(_commitState);
     }
   }
 
@@ -142,10 +154,13 @@ class StateProvider {
 
     _isStateLoaded = true;
 
-    _provideStateSubscription = rx.observable(_providerStream.stream)
+    _provideStateSubscription = rx
+        .observable(_providerStream.stream)
         .debounce(const Duration(milliseconds: 20))
         .listen((Entity state) {
-      if (_state == null || _stateId == null || state == null) throw new ArgumentError('unable to provide state! stateGroup: $_state, stateId: $_stateId, component null? ${state == null}');
+      if (_state == null || _stateId == null || state == null)
+        throw new ArgumentError(
+            'unable to provide state! stateGroup: $_state, stateId: $_stateId, component null? ${state == null}');
 
       stateService.registerComponentState(_state, _stateId, state);
     });
