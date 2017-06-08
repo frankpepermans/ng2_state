@@ -127,8 +127,7 @@ class StateProvider {
       _commitState(true);
     else {
       _loadStateSubscription = new rx.Observable<bool>.amb(<Stream<bool>>[
-        rx
-            .observable(stateService.updated$)
+        new rx.Observable<bool>(stateService.updated$)
             .startWith(true)
             .where((_) => stateService.isFullyRegistered(this)),
         new Future<Null>.delayed(const Duration(seconds: 1))
@@ -154,8 +153,7 @@ class StateProvider {
 
     _isStateLoaded = true;
 
-    _provideStateSubscription = rx
-        .observable(_providerStream.stream)
+    _provideStateSubscription = new rx.Observable<Entity>(_providerStream.stream)
         .debounce(const Duration(milliseconds: 20))
         .listen((Entity state) {
       if (_state == null || _stateId == null || state == null)

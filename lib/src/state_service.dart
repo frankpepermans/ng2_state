@@ -165,8 +165,8 @@ class StateService {
 
     _getSnapshot$()
       .listen((Tuple2<storage.Store, List<StateContainer>> tuple) {
-        rx.observable(_aggregatedState$ctrl.stream).startWith(tuple.item2)
-          .call(onData:(List<StateContainer> aggregated) => aggregated
+        new rx.Observable<List<StateContainer>>(_aggregatedState$ctrl.stream).startWith(tuple.item2)
+          .doOnData((List<StateContainer> aggregated) => aggregated
             .forEach((StateContainer container) => _snapshot[_toKey(container)] = container))
           .flatMapLatest((List<StateContainer> aggregated) =>
             new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
@@ -184,7 +184,7 @@ class StateService {
               .take(1)
               .map((_) => encoded))
           .distinct((String a, String b) => identical(a, b))
-          .call(onData:(String encoded) => lastEncodedState = encoded)
+          .doOnData((String encoded) => lastEncodedState = encoded)
           .listen((String encoded) => print('state persisted ${encoded.length}'), onError: ([dynamic error]) {
           if (error is DomException) {
             print(error.message);
@@ -199,7 +199,7 @@ class StateService {
             _evictState$ctrl.stream,
             _stateProvider$ctrl.stream
           ]),
-          rx.observable(_aggregatedState$ctrl.stream)
+          new rx.Observable<List<StateContainer>>(_aggregatedState$ctrl.stream)
             .startWith(tuple.item2)
         , (dynamic /*StateContainer|Tuple2<String, String>*/incoming, List<StateContainer> aggregated) {
           if (incoming is StateContainer) {
