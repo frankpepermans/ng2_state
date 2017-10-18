@@ -14,6 +14,6 @@ abstract class StatefulComponent {
 
   Stream<Entity> provideState();
 
-  void receiveState(Entity state, StatePhase phase);
+  void receiveState(covariant Entity state, StatePhase phase);
 
 }
