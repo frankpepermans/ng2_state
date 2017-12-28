@@ -2,7 +2,7 @@ library ng2_state.state_provider;
 
 import 'dart:async';
 
-import 'package:angular2/angular2.dart';
+import 'package:angular/angular.dart';
 import 'package:dorm/dorm.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 

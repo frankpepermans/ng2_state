@@ -1,6 +1,6 @@
 library ng2_state.state;
 
-import 'package:angular2/angular2.dart';
+import 'package:angular/angular.dart';
 
 import 'package:ng2_state/src/stateful_component.dart' show StatefulComponent;
 import 'package:ng2_state/src/state_service.dart' show StateService;
