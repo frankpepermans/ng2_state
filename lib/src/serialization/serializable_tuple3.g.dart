@@ -90,5 +90,5 @@ class SerializableTuple3<R, S, T> extends Entity
   /// Duplicates the [SerializableTuple3] and any recusrive entities to a new [SerializableTuple3]
   @override
   SerializableTuple3<R, S, T> duplicate({List<Symbol> ignoredSymbols: null}) =>
-      super.duplicate(ignoredSymbols: ignoredSymbols);
+      super.duplicate(ignoredSymbols: ignoredSymbols) as SerializableTuple3<R, S, T>;
 }

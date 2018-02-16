@@ -53,5 +53,5 @@ class SerializableTuple1<T> extends Entity with sup.SerializableTuple1<T> {
   /// Duplicates the [SerializableTuple1] and any recusrive entities to a new [SerializableTuple1]
   @override
   SerializableTuple1<T> duplicate({List<Symbol> ignoredSymbols: null}) =>
-      super.duplicate(ignoredSymbols: ignoredSymbols);
+      super.duplicate(ignoredSymbols: ignoredSymbols) as SerializableTuple1<T>;
 }

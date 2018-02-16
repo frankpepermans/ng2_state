@@ -108,5 +108,5 @@ class SerializableTuple4<Q, R, S, T> extends Entity
   @override
   SerializableTuple4<Q, R, S, T> duplicate(
           {List<Symbol> ignoredSymbols: null}) =>
-      super.duplicate(ignoredSymbols: ignoredSymbols);
+      super.duplicate(ignoredSymbols: ignoredSymbols) as SerializableTuple4<Q, R, S, T>;
 }

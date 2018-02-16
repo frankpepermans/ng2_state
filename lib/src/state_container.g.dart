@@ -91,5 +91,5 @@ class StateContainer extends Entity with sup.StateContainer {
   /// Duplicates the [StateContainer] and any recusrive entities to a new [StateContainer]
   @override
   StateContainer duplicate({List<Symbol> ignoredSymbols: null}) =>
-      super.duplicate(ignoredSymbols: ignoredSymbols);
+      super.duplicate(ignoredSymbols: ignoredSymbols) as StateContainer;
 }
