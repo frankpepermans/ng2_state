@@ -1,29 +1,23 @@
 name: ng2_state
 description: A Dart app that uses Angular 2
-version: 0.1.1
+version: 0.2.0
 environment:
   sdk: '>=1.21.0 <2.0.0'
 dependencies:
-  angular2: 3.1.0
-  browser: ^0.10.0
-  dart_to_js_script_rewriter: ^0.1.0
+  angular: ^5.0.0-alpha+11
   dorm: ^1.0.37
   lawndart: ^0.9.0
 dev_dependencies:
-  code_transformers: '0.5.1'
-  build_runner: '>=0.3.4 <0.4.0'
-  source_gen: '>=0.5.0 <0.6.0'
+  build: ^0.12.0
+  source_gen: ^0.8.0
+  build_runner: ^0.8.7
+  build_test: ^0.10.0
+  build_web_compilers: ^0.3.7
   ng2_form_components:
     git: git@github.com:frankpepermans/ng2_form_components.git
 dependency_overrides:
-  build: ^0.9.0
-  build_runner: '>=0.3.4 <0.4.0'
-  source_gen: '>=0.5.0 <0.6.0'
-transformers:
-- angular2:
-    platform_directives:
-    - 'package:angular2/common.dart#COMMON_DIRECTIVES'
-    platform_pipes:
-    - 'package:angular2/common.dart#COMMON_PIPES'
-    entry_points: web/main.dart
-- dart_to_js_script_rewriter
+  ng2_form_components:
+    path: ../ng2_form_components
+web:
+  compiler:
+    debug: dartdevc

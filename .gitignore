@@ -3,6 +3,7 @@
 .pub/
 build/
 packages
+.dart_tool/
 pubspec.lock # (Remove this pattern if you wish to check in your lock file)
 
 # Files created by dart2js
