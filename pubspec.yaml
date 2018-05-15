@@ -2,7 +2,7 @@ name: ng2_state
 description: A Dart app that uses Angular 2
 version: 0.2.0
 environment:
-  sdk: '>=1.21.0 <2.0.0'
+  sdk: '>=2.0.0-dev.51.0 <2.0.0'
 dependencies:
   angular: ^5.0.0-alpha+11
   dorm: ^1.0.37
