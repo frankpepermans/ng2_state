@@ -41,7 +41,7 @@ class StateService {
   StreamController<StateContainer> _snapshot$ctrl =
       new StreamController<StateContainer>.broadcast();
 
-  SerializerJson<String, Map<String, dynamic>> _serializer;
+  SerializerJson<String> _serializer;
   Map<String, StateContainer> _snapshot = <String, StateContainer>{};
   String lastEncodedState = '';
 
@@ -53,7 +53,7 @@ class StateService {
 
     _instance = new StateService._internal(exceptionHandler);
 
-    _instance._serializer = new SerializerJson<String, Map<String, dynamic>>()
+    _instance._serializer = new SerializerJson<String>()
       ..outgoing(const <dynamic>[])
       ..addRule(
           DateTime,
@@ -280,8 +280,9 @@ class StateService {
 
         existing = _factory
             .spawn(_serializer.incoming(existingState), _serializer)
-            .where((Entity entity) => entity is StateContainer)
-            .toList(growable: false) as List<StateContainer>;
+            .where((dynamic entity) => entity is StateContainer)
+            .cast<StateContainer>()
+            .toList(growable: false);
       } catch (error) {
         exceptionHandler.call(error, error.stackTrace,
             'Failed to reopen last state: $existingState');

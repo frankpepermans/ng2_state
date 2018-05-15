@@ -18,6 +18,8 @@ dev_dependencies:
 dependency_overrides:
   ng2_form_components:
     path: ../ng2_form_components
+  dorm:
+    path: ../dorm
 web:
   compiler:
     debug: dartdevc
