@@ -20,6 +20,8 @@ dependency_overrides:
     path: ../ng2_form_components
   dorm:
     path: ../dorm
+  lawndart:
+    path: ../../../ext/google/lawndart
 web:
   compiler:
     debug: dartdevc
