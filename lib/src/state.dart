@@ -41,10 +41,10 @@ class State implements OnDestroy, OnInit {
   final StateProvider _stateProvider;
 
   State(
-    @Inject(StatefulComponent) this._component,
+    /*@Inject(const OpaqueToken('statefulComponent')) this._component,*/
     @Inject(StateProvider) this._stateProvider);
 
-  @override void ngOnInit() {
+  @override void ngOnInit() {return;
     _stateProvider.initStreams(_component);
 
     _provide();
@@ -52,7 +52,7 @@ class State implements OnDestroy, OnInit {
 
   @override void ngOnDestroy() => _stateProvider.flush();
 
-  void _provide() {
+  void _provide() {return;
     if (!_isProvided && _hasState && _hasStateId) {
       _isProvided = true;
 

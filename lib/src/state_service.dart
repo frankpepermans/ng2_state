@@ -38,11 +38,11 @@ class StateService {
       new StreamController<bool>.broadcast();
   final List<StateProvider> _stateProviders = <StateProvider>[];
 
-  StreamController<StateContainer> _snapshot$ctrl =
+  final StreamController<StateContainer> _snapshot$ctrl =
       new StreamController<StateContainer>.broadcast();
 
   SerializerJson<String> _serializer;
-  Map<String, StateContainer> _snapshot = <String, StateContainer>{};
+  final Map<String, StateContainer> _snapshot = <String, StateContainer>{};
   String lastEncodedState = '';
 
   static StateService _instance;
@@ -55,7 +55,7 @@ class StateService {
 
     _instance._serializer = new SerializerJson<String>()
       ..outgoing(const <dynamic>[])
-      ..addRule(
+      ..addRule<int, DateTime>(
           DateTime,
           (int value) => (value != null)
               ? new DateTime.fromMillisecondsSinceEpoch(value, isUtc: true)
@@ -186,7 +186,7 @@ class StateService {
     _initStarted = true;
 
     _stateProvider$ctrl.stream
-        .listen((StateProvider provider) => _stateProviders.add(provider));
+        .listen(_stateProviders.add);
 
     _getSnapshot$().listen((Tuple2<storage.Store, List<StateContainer>> tuple) {
       new rx.Observable<List<StateContainer>>(_aggregatedState$ctrl.stream)
@@ -194,7 +194,7 @@ class StateService {
           .doOnData((List<StateContainer> aggregated) => aggregated.forEach(
               (StateContainer container) =>
                   _snapshot[_toKey(container)] = container))
-          .flatMapLatest((List<StateContainer> aggregated) =>
+          .switchMap((List<StateContainer> aggregated) =>
               new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
                 window.onBeforeUnload,
                 new Stream<dynamic>.periodic(const Duration(seconds: 1)).take(1)
@@ -202,12 +202,12 @@ class StateService {
                   .take(1)
                   .map((dynamic _) => aggregated)
                   .map(_serializer.outgoing))
-          .flatMapLatest((String encoded) => tuple.item1
+          .switchMap((String encoded) => tuple.item1
               .save(encoded, 'state')
               .asStream()
               .take(1)
               .map((_) => encoded))
-          .distinct((String a, String b) => identical(a, b))
+          .distinct(identical)
           .doOnData((String encoded) => lastEncodedState = encoded)
           .listen(
               (String encoded) => print('state persisted ${encoded.length}'),

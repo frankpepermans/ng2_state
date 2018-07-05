@@ -49,8 +49,7 @@ class StateProvider {
     if (value != null)
       _providerPipeSubscription = value.provideState().listen(
           _providerStream.add,
-          onError: (Error error, StackTrace stackTrace) =>
-              _providerStream.addError(error, stackTrace), onDone: () {
+          onError: _providerStream.addError, onDone: () {
         _providerStream.close();
 
         _providerPipeSubscription?.cancel();
@@ -76,7 +75,7 @@ class StateProvider {
       @Inject(ExceptionHandler) this.exceptionHandler);
 
   void provide(StatefulComponent component, String stateGroup, String stateId,
-      {State directive: null}) {
+      {State directive}) {
     this.directive = directive;
     this.component = component;
     this.state = stateGroup;
@@ -126,7 +125,7 @@ class StateProvider {
     if (stateService.isFullyRegistered(this))
       _commitState(true);
     else {
-      _loadStateSubscription = new rx.Observable<bool>.amb(<Stream<bool>>[
+      _loadStateSubscription = new rx.Observable<bool>.race(<Stream<bool>>[
         new rx.Observable<bool>(stateService.updated$)
             .startWith(true)
             .where((_) => stateService.isFullyRegistered(this)),

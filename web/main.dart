@@ -24,7 +24,7 @@ void main() {
 )
 class AppComponent {
 
-  LabelHandler labelHandler = (String value) => value;
+  LabelHandler<String> labelHandler = (String value) => value;
   List<ListItem<String>> dataProviderA;
 
   AppComponent() {
