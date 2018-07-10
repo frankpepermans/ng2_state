@@ -1,5 +1,3 @@
-library ng2_state.state;
-
 import 'package:angular/angular.dart';
 
 import 'package:ng2_state/src/stateful_component.dart' show StatefulComponent;
@@ -7,18 +5,14 @@ import 'package:ng2_state/src/state_service.dart' show StateService;
 import 'package:ng2_state/src/state_provider.dart' show StateProvider;
 
 @Directive(
-    selector: '[state]',
-    providers: const <Type>[StateService, StateProvider]
-)
-class State implements OnDestroy, OnInit {
-
+    selector: '[state]', providers: const <Type>[StateService, StateProvider])
+class State implements OnDestroy {
   bool _hasState = false, _hasStateId = false, _isProvided = false;
-
-  final StatefulComponent _component;
 
   String _state;
   String get state => _state;
-  @Input() set state(String value) {
+  @Input()
+  set state(String value) {
     _state = value;
     _hasState = value != null;
 
@@ -29,7 +23,8 @@ class State implements OnDestroy, OnInit {
 
   String _stateId;
   String get stateId => _stateId;
-  @Input() set stateId(String value) {
+  @Input()
+  set stateId(String value) {
     _stateId = value;
     _hasStateId = true;
 
@@ -38,25 +33,32 @@ class State implements OnDestroy, OnInit {
     _provide();
   }
 
-  final StateProvider _stateProvider;
+  StatefulComponent _statefulComponent;
+  StatefulComponent get statefulComponent => _statefulComponent;
+  @Input()
+  set statefulComponent(StatefulComponent value) {
+    _statefulComponent = value;
 
-  State(
-    /*@Inject(const OpaqueToken('statefulComponent')) this._component,*/
-    @Inject(StateProvider) this._stateProvider);
+    if (value != null) {
+      _stateProvider.initStreams(value);
 
-  @override void ngOnInit() {return;
-    _stateProvider.initStreams(_component);
-
-    _provide();
+      _provide();
+    }
   }
 
-  @override void ngOnDestroy() => _stateProvider.flush();
+  final StateProvider _stateProvider;
 
-  void _provide() {return;
+  State(@Inject(StateProvider) this._stateProvider);
+
+  @override
+  void ngOnDestroy() => _stateProvider.flush();
+
+  void _provide() {
     if (!_isProvided && _hasState && _hasStateId) {
       _isProvided = true;
 
-      _stateProvider.provide(_component, state, stateId, directive: this);
+      _stateProvider.provide(_statefulComponent, state, stateId,
+          directive: this);
     }
   }
 }

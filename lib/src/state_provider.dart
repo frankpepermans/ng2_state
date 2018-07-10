@@ -1,5 +1,3 @@
-library ng2_state.state_provider;
-
 import 'dart:async';
 
 import 'package:angular/angular.dart';
@@ -18,22 +16,26 @@ class StateProvider {
   String get state => _state;
   @Input()
   set state(String value) {
-    _state = value;
+    if (_state != value) {
+      _state = value;
 
-    if (component != null) component.stateGroup = value;
+      if (component != null) component.stateGroup = value;
 
-    _triggerLoadState();
+      _triggerLoadState();
+    }
   }
 
   String _stateId;
   String get stateId => _stateId;
   @Input()
   set stateId(String value) {
-    _stateId = value;
+    if (_stateId != value) {
+      _stateId = value;
 
-    if (component != null) component.stateId = value;
+      if (component != null) component.stateId = value;
 
-    _triggerLoadState();
+      _triggerLoadState();
+    }
   }
 
   final StateService stateService;
