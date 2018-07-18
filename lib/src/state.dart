@@ -11,7 +11,7 @@ class State implements OnDestroy {
 
   String _state;
   String get state => _state;
-  @Input()
+  @Input('state')
   set state(String value) {
     _state = value;
     _hasState = value != null;
@@ -23,7 +23,7 @@ class State implements OnDestroy {
 
   String _stateId;
   String get stateId => _stateId;
-  @Input()
+  @Input('stateId')
   set stateId(String value) {
     _stateId = value;
     _hasStateId = true;
@@ -35,9 +35,9 @@ class State implements OnDestroy {
 
   StatefulComponent _statefulComponent;
   StatefulComponent get statefulComponent => _statefulComponent;
-  @Input()
+  @Input('statefulComponent')
   set statefulComponent(StatefulComponent value) {
-    _statefulComponent = value;
+    _statefulComponent = value;print('heya, I was set! $value');
 
     if (value != null) {
       _stateProvider.initStreams(value);
