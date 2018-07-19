@@ -7,7 +7,7 @@ import 'package:ng2_state/src/state_provider.dart' show StateProvider;
 @Directive(
     selector: '[state]', providers: const <Type>[StateService, StateProvider])
 class State implements OnDestroy {
-  bool _hasState = false, _hasStateId = false, _isProvided = false;
+  bool _hasState = false, _hasStateId = false, _hasComponent = false, _isProvided = false;
 
   String _state;
   String get state => _state;
@@ -37,9 +37,10 @@ class State implements OnDestroy {
   StatefulComponent get statefulComponent => _statefulComponent;
   @Input('statefulComponent')
   set statefulComponent(StatefulComponent value) {
-    _statefulComponent = value;print('heya, I was set! $value');
+    _statefulComponent = value;
 
     if (value != null) {
+      _hasComponent = true;
       _stateProvider.initStreams(value);
 
       _provide();
@@ -54,7 +55,7 @@ class State implements OnDestroy {
   void ngOnDestroy() => _stateProvider.flush();
 
   void _provide() {
-    if (!_isProvided && _hasState && _hasStateId) {
+    if (!_isProvided && _hasState && _hasStateId && _hasComponent) {
       _isProvided = true;
 
       _stateProvider.provide(_statefulComponent, state, stateId,
