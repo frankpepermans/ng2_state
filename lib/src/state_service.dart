@@ -108,6 +108,7 @@ class StateService {
   }
 
   bool isFullyRegistered(StateProvider stateProvider) =>
+      stateProvider.component != null &&
       _snapshot.containsKey('${stateProvider.state}|${stateProvider.stateId}');
 
   String _toKey(StateContainer container) =>
@@ -185,8 +186,7 @@ class StateService {
 
     _initStarted = true;
 
-    _stateProvider$ctrl.stream
-        .listen(_stateProviders.add);
+    _stateProvider$ctrl.stream.listen(_stateProviders.add);
 
     _getSnapshot$().listen((Tuple2<storage.Store, List<StateContainer>> tuple) {
       new rx.Observable<List<StateContainer>>(_aggregatedState$ctrl.stream)
