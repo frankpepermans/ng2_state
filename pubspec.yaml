@@ -6,7 +6,6 @@ environment:
 dependencies:
   angular: ^5.0.0-alpha+11
   dorm: ^1.0.37
-  lawndart: ^0.9.0
 dev_dependencies:
   build: ^0.12.0
   source_gen: ^0.8.0
@@ -15,13 +14,6 @@ dev_dependencies:
   build_web_compilers: ^0.3.7
   ng2_form_components:
     git: git@github.com:frankpepermans/ng2_form_components.git
-dependency_overrides:
-  ng2_form_components:
-    path: ../ng2_form_components
-  dorm:
-    path: ../dorm
-  lawndart:
-    path: ../../../ext/google/lawndart
 web:
   compiler:
     debug: dartdevc

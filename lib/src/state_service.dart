@@ -1,5 +1,3 @@
-library ng2_state.state_service;
-
 import 'dart:async';
 import 'dart:html';
 
@@ -8,7 +6,6 @@ import 'package:angular/angular.dart';
 import 'package:dorm/dorm.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 import 'package:tuple/tuple.dart';
-import 'package:lawndart/lawndart.dart' as storage;
 
 import 'package:ng2_state/src/state_container.g.dart';
 import 'package:ng2_state/src/state_recording_session.dart';
@@ -188,107 +185,97 @@ class StateService {
 
     _stateProvider$ctrl.stream.listen(_stateProviders.add);
 
-    _getSnapshot$().listen((Tuple2<storage.Store, List<StateContainer>> tuple) {
-      new rx.Observable<List<StateContainer>>(_aggregatedState$ctrl.stream)
-          .startWith(tuple.item2)
-          .doOnData((List<StateContainer> aggregated) => aggregated.forEach(
-              (StateContainer container) =>
-                  _snapshot[_toKey(container)] = container))
-          .switchMap((List<StateContainer> aggregated) =>
-              new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
-                window.onBeforeUnload,
-                new Stream<dynamic>.periodic(const Duration(seconds: 1)).take(1)
-              ])
-                  .take(1)
-                  .map((dynamic _) => aggregated)
-                  .map(_serializer.outgoing))
-          .switchMap((String encoded) => tuple.item1
-              .save(encoded, 'state')
-              .asStream()
-              .take(1)
-              .map((_) => encoded))
-          .distinct(identical)
-          .doOnData((String encoded) => lastEncodedState = encoded)
-          .listen(
-              (String encoded) => print('state persisted ${encoded.length}'),
-              onError: ([dynamic error]) {
-        if (error is DomException) {
-          print(error.message);
-        } else {
-          print('state failed: $error, ${error.stackTrace}');
-        }
-      });
+    final List<StateContainer> snapshot = _getSnapshot();
 
-      rx.Observable.zip2<dynamic, List<StateContainer>, List<StateContainer>>(
-          new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
-            _state$ctrl.stream,
-            _evictState$ctrl.stream,
-            _stateProvider$ctrl.stream
-          ]),
-          new rx.Observable<List<StateContainer>>(_aggregatedState$ctrl.stream)
-              .startWith(tuple.item2),
-          (dynamic /*StateContainer|Tuple2<String, String>*/ incoming,
-              List<StateContainer> aggregated) {
-        if (incoming is StateContainer) {
-          final List<StateContainer> copy =
-              new List<StateContainer>.from(aggregated);
+    new rx.Observable<List<StateContainer>>(_aggregatedState$ctrl.stream)
+        .startWith(snapshot)
+        .doOnData((List<StateContainer> aggregated) => aggregated.forEach(
+            (StateContainer container) =>
+                _snapshot[_toKey(container)] = container))
+        .switchMap((List<StateContainer> aggregated) =>
+            new rx.Observable<dynamic>.race(<Stream<dynamic>>[
+              window.onBeforeUnload,
+              new Stream<dynamic>.periodic(const Duration(seconds: 1))
+            ]).take(1).map((dynamic _) => aggregated).map(_serializer.outgoing))
+        .doOnData((String encoded) {
+          window.localStorage[stateName] = encoded;
+        })
+        .distinct(identical)
+        .doOnData((String encoded) => lastEncodedState = encoded)
+        .listen((String encoded) => print('state persisted ${encoded.length}'),
+            onError: ([dynamic error]) {
+          if (error is DomException) {
+            print(error.message);
+          } else {
+            print('state failed: $error, ${error.stackTrace}');
+          }
+        });
 
-          copy.removeWhere((StateContainer container) =>
-              container.group == incoming.group && container.id == incoming.id);
+    rx.Observable.zip2<dynamic, List<StateContainer>, List<StateContainer>>(
+        new rx.Observable<dynamic>.merge(<Stream<dynamic>>[
+          _state$ctrl.stream,
+          _evictState$ctrl.stream,
+          _stateProvider$ctrl.stream
+        ]),
+        new rx.Observable<List<StateContainer>>(_aggregatedState$ctrl.stream)
+            .startWith(snapshot),
+        (dynamic /*StateContainer|Tuple2<String, String>*/ incoming,
+            List<StateContainer> aggregated) {
+      if (incoming is StateContainer) {
+        final List<StateContainer> copy =
+            new List<StateContainer>.from(aggregated);
 
-          copy.add(incoming);
+        copy.removeWhere((StateContainer container) =>
+            container.group == incoming.group && container.id == incoming.id);
 
-          return copy;
-        } else if (incoming is Tuple2<String, String>) {
-          final List<StateContainer> copy =
-              new List<StateContainer>.from(aggregated);
+        copy.add(incoming);
 
-          copy.removeWhere((StateContainer container) =>
-              container.group == incoming.item1 &&
-              (incoming.item2 == null || container.id == incoming.item2));
+        return copy;
+      } else if (incoming is Tuple2<String, String>) {
+        final List<StateContainer> copy =
+            new List<StateContainer>.from(aggregated);
 
-          return copy;
-        } else if (incoming is StateProvider) {
-          _snapshot.putIfAbsent(
-              '${incoming.state}|${incoming.stateId}',
-              () => aggregated.firstWhere(
-                  (StateContainer container) =>
-                      container.group == incoming.state &&
-                      container.id == incoming.stateId,
-                  orElse: () => null));
-        }
+        copy.removeWhere((StateContainer container) =>
+            container.group == incoming.item1 &&
+            (incoming.item2 == null || container.id == incoming.item2));
 
-        return aggregated;
-      }).listen(_aggregatedState$ctrl.add);
+        return copy;
+      } else if (incoming is StateProvider) {
+        _snapshot.putIfAbsent(
+            '${incoming.state}|${incoming.stateId}',
+            () => aggregated.firstWhere(
+                (StateContainer container) =>
+                    container.group == incoming.state &&
+                    container.id == incoming.stateId,
+                orElse: () => null));
+      }
 
-      _ready$ctrl.add(true);
+      return aggregated;
+    }).listen(_aggregatedState$ctrl.add);
 
-      isReady = true;
-    });
+    _ready$ctrl.add(true);
+
+    isReady = true;
   }
 
-  Stream<Tuple2<storage.Store, List<StateContainer>>> _getSnapshot$() async* {
-    final storage.Store db = await storage.Store.open('ng2_db', stateName);
-    final String existingState = await db.getByKey('state');
-    List<StateContainer> existing = <StateContainer>[];
-
-    if (existingState != null) {
+  List<StateContainer> _getSnapshot() {
+    if (window.localStorage.containsKey(stateName)) {
       try {
         print('Loading existing state...');
 
-        lastEncodedState = existingState;
+        lastEncodedState = window.localStorage[stateName];
 
-        existing = _factory
-            .spawn(_serializer.incoming(existingState), _serializer)
+        return _factory
+            .spawn(_serializer.incoming(lastEncodedState), _serializer)
             .where((dynamic entity) => entity is StateContainer)
             .cast<StateContainer>()
             .toList(growable: false);
       } catch (error) {
         exceptionHandler.call(error, error.stackTrace,
-            'Failed to reopen last state: $existingState');
+            'Failed to reopen last state: ${window.localStorage[stateName]}');
       }
     }
 
-    yield new Tuple2<storage.Store, List<StateContainer>>(db, existing);
+    return <StateContainer>[];
   }
 }
