@@ -2,7 +2,6 @@
 
 // **************************************************************************
 // Generator: CodeGenerator
-// Target: abstract class SerializableTuple3
 // **************************************************************************
 
 import 'package:dorm/dorm.dart';
@@ -78,17 +77,43 @@ class SerializableTuple3<R, S, T> extends Entity
   }
 
   /// Constructor
-  SerializableTuple3() : super() {
+  SerializableTuple3() {
     Entity.ASSEMBLER
         .registerProxies(this, <DormProxy<dynamic>>[_item1, _item2, _item3]);
   }
 
   /// Internal constructor
-  static SerializableTuple3<R, S, T>
-      construct<R, S, T>() => new SerializableTuple3<R, S, T>();
+  static SerializableTuple3<R, S, T> construct<R, S, T>() =>
+      new SerializableTuple3<R, S, T>();
 
-  /// Duplicates the [SerializableTuple3] and any recusrive entities to a new [SerializableTuple3]
+  /// withItem1
+  SerializableTuple3<R, S, T> withItem1(R value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple3.ITEM1_SYMBOL])
+        ..item1 = value;
+
+  /// withItem2
+  SerializableTuple3<R, S, T> withItem2(S value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple3.ITEM2_SYMBOL])
+        ..item2 = value;
+
+  /// withItem3
+  SerializableTuple3<R, S, T> withItem3(T value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple3.ITEM3_SYMBOL])
+        ..item3 = value;
+
+  /// Duplicates the [SerializableTuple3] and any recursive entities to a new [SerializableTuple3]
   @override
-  SerializableTuple3<R, S, T> duplicate({List<Symbol> ignoredSymbols: null}) =>
-      super.duplicate(ignoredSymbols: ignoredSymbols) as SerializableTuple3<R, S, T>;
+  SerializableTuple3<R, S, T> duplicate({List<Symbol> ignoredSymbols}) =>
+      super.duplicate(ignoredSymbols: ignoredSymbols)
+          as SerializableTuple3<R, S, T>;
+  @override
+  bool operator ==(Object other) =>
+      other is SerializableTuple3<R, S, T> && other.hashCode == this.hashCode;
+  @override
+  int get hashCode => hash_finish(0);
+
+  /// toString implementation for debugging purposes
+  @override
+  String toString() =>
+      'i112ng2_state_lib_src_serialization_serializable_tuple3';
 }

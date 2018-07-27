@@ -2,7 +2,6 @@
 
 // **************************************************************************
 // Generator: CodeGenerator
-// Target: abstract class StateContainer
 // **************************************************************************
 
 import 'package:dorm/dorm.dart';
@@ -80,7 +79,7 @@ class StateContainer extends Entity with sup.StateContainer {
   }
 
   /// Constructor
-  StateContainer() : super() {
+  StateContainer() {
     Entity.ASSEMBLER
         .registerProxies(this, <DormProxy<dynamic>>[_group, _id, _stateParts]);
   }
@@ -88,8 +87,34 @@ class StateContainer extends Entity with sup.StateContainer {
   /// Internal constructor
   static StateContainer construct() => new StateContainer();
 
-  /// Duplicates the [StateContainer] and any recusrive entities to a new [StateContainer]
+  /// withGroup
+  StateContainer withGroup(String value) =>
+      duplicate(ignoredSymbols: const <Symbol>[StateContainer.GROUP_SYMBOL])
+        ..group = value;
+
+  /// withId
+  StateContainer withId(String value) =>
+      duplicate(ignoredSymbols: const <Symbol>[StateContainer.ID_SYMBOL])
+        ..id = value;
+
+  /// withStateParts
+  StateContainer withStateParts(Entity value) => duplicate(
+      ignoredSymbols: const <Symbol>[StateContainer.STATEPARTS_SYMBOL])
+    ..stateParts = value;
+
+  /// Duplicates the [StateContainer] and any recursive entities to a new [StateContainer]
   @override
-  StateContainer duplicate({List<Symbol> ignoredSymbols: null}) =>
+  StateContainer duplicate({List<Symbol> ignoredSymbols}) =>
       super.duplicate(ignoredSymbols: ignoredSymbols) as StateContainer;
+  @override
+  bool operator ==(Object other) =>
+      other is StateContainer && other.hashCode == this.hashCode;
+  @override
+  int get hashCode => hash_finish(hash_combine(
+      hash_combine(hash_combine(0, this.group.hashCode), this.id.hashCode),
+      this.stateParts.hashCode));
+
+  /// toString implementation for debugging purposes
+  @override
+  String toString() => 'StateContainer: {group: $group, id: $id}';
 }

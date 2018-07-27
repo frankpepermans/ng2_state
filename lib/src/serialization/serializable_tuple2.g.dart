@@ -2,7 +2,6 @@
 
 // **************************************************************************
 // Generator: CodeGenerator
-// Target: abstract class SerializableTuple2
 // **************************************************************************
 
 import 'package:dorm/dorm.dart';
@@ -61,17 +60,38 @@ class SerializableTuple2<S, T> extends Entity
   }
 
   /// Constructor
-  SerializableTuple2() : super() {
+  SerializableTuple2() {
     Entity.ASSEMBLER
         .registerProxies(this, <DormProxy<dynamic>>[_item1, _item2]);
   }
 
   /// Internal constructor
-  static SerializableTuple2<S, T>
-      construct<S, T>() => new SerializableTuple2<S, T>();
+  static SerializableTuple2<S, T> construct<S, T>() =>
+      new SerializableTuple2<S, T>();
 
-  /// Duplicates the [SerializableTuple2] and any recusrive entities to a new [SerializableTuple2]
+  /// withItem1
+  SerializableTuple2<S, T> withItem1(S value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple2.ITEM1_SYMBOL])
+        ..item1 = value;
+
+  /// withItem2
+  SerializableTuple2<S, T> withItem2(T value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple2.ITEM2_SYMBOL])
+        ..item2 = value;
+
+  /// Duplicates the [SerializableTuple2] and any recursive entities to a new [SerializableTuple2]
   @override
-  SerializableTuple2<S, T> duplicate({List<Symbol> ignoredSymbols: null}) =>
-      super.duplicate(ignoredSymbols: ignoredSymbols) as SerializableTuple2<S, T>;
+  SerializableTuple2<S, T> duplicate({List<Symbol> ignoredSymbols}) =>
+      super.duplicate(ignoredSymbols: ignoredSymbols)
+          as SerializableTuple2<S, T>;
+  @override
+  bool operator ==(Object other) =>
+      other is SerializableTuple2<S, T> && other.hashCode == this.hashCode;
+  @override
+  int get hashCode => hash_finish(0);
+
+  /// toString implementation for debugging purposes
+  @override
+  String toString() =>
+      'i112ng2_state_lib_src_serialization_serializable_tuple2';
 }

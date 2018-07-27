@@ -2,7 +2,6 @@
 
 // **************************************************************************
 // Generator: CodeGenerator
-// Target: abstract class SerializableTuple4
 // **************************************************************************
 
 import 'package:dorm/dorm.dart';
@@ -95,18 +94,49 @@ class SerializableTuple4<Q, R, S, T> extends Entity
   }
 
   /// Constructor
-  SerializableTuple4() : super() {
+  SerializableTuple4() {
     Entity.ASSEMBLER.registerProxies(
         this, <DormProxy<dynamic>>[_item1, _item2, _item3, _item4]);
   }
 
   /// Internal constructor
-  static SerializableTuple4<Q, R, S, T>
-      construct<Q, R, S, T>() => new SerializableTuple4<Q, R, S, T>();
+  static SerializableTuple4<Q, R, S, T> construct<Q, R, S, T>() =>
+      new SerializableTuple4<Q, R, S, T>();
 
-  /// Duplicates the [SerializableTuple4] and any recusrive entities to a new [SerializableTuple4]
+  /// withItem1
+  SerializableTuple4<Q, R, S, T> withItem1(Q value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple4.ITEM1_SYMBOL])
+        ..item1 = value;
+
+  /// withItem2
+  SerializableTuple4<Q, R, S, T> withItem2(R value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple4.ITEM2_SYMBOL])
+        ..item2 = value;
+
+  /// withItem3
+  SerializableTuple4<Q, R, S, T> withItem3(S value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple4.ITEM3_SYMBOL])
+        ..item3 = value;
+
+  /// withItem4
+  SerializableTuple4<Q, R, S, T> withItem4(T value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple4.ITEM4_SYMBOL])
+        ..item4 = value;
+
+  /// Duplicates the [SerializableTuple4] and any recursive entities to a new [SerializableTuple4]
   @override
-  SerializableTuple4<Q, R, S, T> duplicate(
-          {List<Symbol> ignoredSymbols: null}) =>
-      super.duplicate(ignoredSymbols: ignoredSymbols) as SerializableTuple4<Q, R, S, T>;
+  SerializableTuple4<Q, R, S, T> duplicate({List<Symbol> ignoredSymbols}) =>
+      super.duplicate(ignoredSymbols: ignoredSymbols)
+          as SerializableTuple4<Q, R, S, T>;
+  @override
+  bool operator ==(Object other) =>
+      other is SerializableTuple4<Q, R, S, T> &&
+      other.hashCode == this.hashCode;
+  @override
+  int get hashCode => hash_finish(0);
+
+  /// toString implementation for debugging purposes
+  @override
+  String toString() =>
+      'i112ng2_state_lib_src_serialization_serializable_tuple4';
 }

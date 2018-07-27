@@ -2,7 +2,6 @@
 
 // **************************************************************************
 // Generator: CodeGenerator
-// Target: abstract class SerializableTuple5
 // **************************************************************************
 
 import 'package:dorm/dorm.dart';
@@ -112,18 +111,54 @@ class SerializableTuple5<P, Q, R, S, T> extends Entity
   }
 
   /// Constructor
-  SerializableTuple5() : super() {
+  SerializableTuple5() {
     Entity.ASSEMBLER.registerProxies(
         this, <DormProxy<dynamic>>[_item1, _item2, _item3, _item4, _item5]);
   }
 
   /// Internal constructor
-  static SerializableTuple5<P, Q, R, S, T>
-      construct<P, Q, R, S, T>() => new SerializableTuple5<P, Q, R, S, T>();
+  static SerializableTuple5<P, Q, R, S, T> construct<P, Q, R, S, T>() =>
+      new SerializableTuple5<P, Q, R, S, T>();
 
-  /// Duplicates the [SerializableTuple5] and any recusrive entities to a new [SerializableTuple5]
+  /// withItem1
+  SerializableTuple5<P, Q, R, S, T> withItem1(P value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple5.ITEM1_SYMBOL])
+        ..item1 = value;
+
+  /// withItem2
+  SerializableTuple5<P, Q, R, S, T> withItem2(Q value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple5.ITEM2_SYMBOL])
+        ..item2 = value;
+
+  /// withItem3
+  SerializableTuple5<P, Q, R, S, T> withItem3(R value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple5.ITEM3_SYMBOL])
+        ..item3 = value;
+
+  /// withItem4
+  SerializableTuple5<P, Q, R, S, T> withItem4(S value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple5.ITEM4_SYMBOL])
+        ..item4 = value;
+
+  /// withItem5
+  SerializableTuple5<P, Q, R, S, T> withItem5(T value) =>
+      duplicate(ignoredSymbols: const <Symbol>[SerializableTuple5.ITEM5_SYMBOL])
+        ..item5 = value;
+
+  /// Duplicates the [SerializableTuple5] and any recursive entities to a new [SerializableTuple5]
   @override
-  SerializableTuple5<P, Q, R, S, T> duplicate(
-          {List<Symbol> ignoredSymbols: null}) =>
-      super.duplicate(ignoredSymbols: ignoredSymbols) as SerializableTuple5<P, Q, R, S, T>;
+  SerializableTuple5<P, Q, R, S, T> duplicate({List<Symbol> ignoredSymbols}) =>
+      super.duplicate(ignoredSymbols: ignoredSymbols)
+          as SerializableTuple5<P, Q, R, S, T>;
+  @override
+  bool operator ==(Object other) =>
+      other is SerializableTuple5<P, Q, R, S, T> &&
+      other.hashCode == this.hashCode;
+  @override
+  int get hashCode => hash_finish(0);
+
+  /// toString implementation for debugging purposes
+  @override
+  String toString() =>
+      'i112ng2_state_lib_src_serialization_serializable_tuple5';
 }
